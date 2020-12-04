@@ -1,0 +1,500 @@
+
+
+#############################################################################################
+#############################################################################################
+#############################################################################################
+setwd("F:\\#R\\AMF\\Miseq\\Medicago\\R_code_for_github")
+library(vegan)
+library(RColorBrewer)
+library(gplots)
+library(ComplexHeatmap)
+library(circlize)
+library(dendextend)
+
+###Fig.1C
+###组合热图绘制
+seven_cluster_locus_id_notes <- read.csv(file = "seven_cluster_locus_id_notes.csv")
+seven_cluster_ids_rep_scale_final_used <- read.csv(file = "seven_cluster_ids_rep_scale_final_used.csv",row.names = 1)
+###添加信息
+sym_markers <- read.csv(file="symbiosis_biomarkers.csv") ###来自共生相关文献汇总
+core_psr <- read.csv(file = "core_psr_genes.csv") ###来自拟南芥core PSR同源信息
+RM_mutualist <- read.csv(file = "Multiple_mutualist_effects.csv") ###来自文献Molecular Ecology (2016) 25, 4946–4962
+
+############################
+###1）headmap4-RM_mutualist组合热图汇总
+names(seven_cluster_ids_rep_scale_final_used)
+
+heatmap4_rep.log.scale <- seven_cluster_ids_rep_scale_final_used[,27:61]
+dend = hclust(dist(heatmap4_rep.log.scale))
+dend = color_branches(dend, k = 7)
+
+#mycol <- colorRamp2(c(-2, 0, 2), c("blue", "white", "red")) ###照顾红绿色盲
+mycol <- colorRamp2(c(-2, 0, 2), c("#0093A9", "white", "#AD1E47")) ###参考doi:10.1038/nature21417取色
+Heatmap4 <- Heatmap(heatmap4_rep.log.scale, col = mycol, 
+                    #name = paste("Scale"), 
+                    show_heatmap_legend = F,
+                    cluster_columns = T, 
+                    column_names_gp = gpar(fontsize = 8),
+                    show_row_names = F,
+                    clustering_distance_columns = "pearson",
+                    clustering_method_columns = "average",
+                    clustering_distance_rows = "pearson",
+                    clustering_method_rows = "average",
+                    row_dend_width = unit(2, "cm"),
+                    cluster_rows = dend,
+                    split = 7)
+
+windows(6,6)
+Heatmap4
+###与前面分析完全一致
+###
+R_only <- subset(RM_mutualist, Category == "R only")
+M_only <- subset(RM_mutualist, Category == "M only")
+Additively <- subset(RM_mutualist, Category == "Additively")
+Nonadditively <- subset(RM_mutualist, Category == "Non-additively")
+
+Rhizobium_only_affacted <- match(seven_cluster_ids_rep_scale_final_used$gene_short_name, R_only$Gene_ID)
+Rhizobium_only_affacted[!is.na(Rhizobium_only_affacted)] <- 1; Rhizobium_only_affacted[is.na(Rhizobium_only_affacted)] <- 0
+table(Rhizobium_only_affacted)
+
+AMF_only_affacted <- match(seven_cluster_ids_rep_scale_final_used$gene_short_name, M_only$Gene_ID)
+AMF_only_affacted[!is.na(AMF_only_affacted)] <- 1; AMF_only_affacted[is.na(AMF_only_affacted)] <- 0
+table(AMF_only_affacted)
+
+Additively_affacted <- match(seven_cluster_ids_rep_scale_final_used$gene_short_name, Additively$Gene_ID)
+Additively_affacted[!is.na(Additively_affacted)] <- 1; Additively_affacted[is.na(Additively_affacted)] <- 0
+table(Additively_affacted)
+
+Nonadditively_affacted <- match(seven_cluster_ids_rep_scale_final_used$gene_short_name, Nonadditively$Gene_ID)
+Nonadditively_affacted[!is.na(Nonadditively_affacted)] <- 1; Nonadditively_affacted[is.na(Nonadditively_affacted)] <- 0
+table(Nonadditively_affacted)
+
+#####
+seven_cluster_ids_rep_scale_final_used[,62:65] <- cbind(Rhizobium_only_affacted, AMF_only_affacted, Additively_affacted, Nonadditively_affacted)
+names(seven_cluster_ids_rep_scale_final_used)[62:65] <- c("Rhizobium only", "AMF only", "Additively", "Non-additively")
+
+###Fig.1C finall
+windows(5,5)
+Heatmap4 + 
+  Heatmap(seven_cluster_ids_rep_scale_final_used$`Rhizobium only`, name = "Rhi.", width = unit(2, "mm"),
+          col = colorRamp2(c(0, 1), c("white", "black")), column_names_side = "top",column_names_gp = gpar(fontsize = 8),
+          show_heatmap_legend = F) +
+  
+  Heatmap(seven_cluster_ids_rep_scale_final_used$`AMF only`, name = "AMF", width = unit(2, "mm"),
+          col = colorRamp2(c(0, 1), c("white", "black")), column_names_side = "top",column_names_gp = gpar(fontsize = 8),
+          show_heatmap_legend = F) +
+  
+  Heatmap(seven_cluster_ids_rep_scale_final_used$Additively, name = "Add.", width = unit(2, "mm"),
+          col = colorRamp2(c(0, 1), c("white", "black")), column_names_side = "top",column_names_gp = gpar(fontsize = 8),
+          show_heatmap_legend = F) +
+  
+  Heatmap(seven_cluster_ids_rep_scale_final_used$`Non-additively`, name = "Non-.", width = unit(2, "mm"),
+          col = colorRamp2(c(0, 1), c("white", "black")), column_names_side = "top",column_names_gp = gpar(fontsize = 8),
+          show_heatmap_legend = F)
+
+###结果非常完美,差异基因基本是菌根真菌共生诱导的
+
+
+
+####################################################################################################
+####################################################################################################
+####################################################################################################
+
+###Figure S2-A
+###对7个cluster分别进行Multiple_mutualist_effects的显著性检验
+names(seven_cluster_ids_rep_scale_final_used)
+
+cluster.stat <- aggregate(x = seven_cluster_ids_rep_scale_final_used[,62:65],
+                          by = list(seven_cluster_ids_rep_scale_final_used[,14]), 
+                          FUN = sum)
+
+Freq <- table(seven_cluster_ids_rep_scale_final_used$Cluster.x)
+
+cl_ratio1 <- cbind(cluster.stat, Freq)
+row.names(cl_ratio1) <- cl_ratio1$Group.1
+cl_ratio <- cl_ratio1[,-c(1,6)]
+
+table(RM_mutualist$Category)
+cl_ratio[8,] <- c(2627,4730,561,62,52255) ###52255为总检测基因数
+row.names(cl_ratio)[8] <- "Genome"
+
+cl_ratio <- cl_ratio[c(8,1:7),]
+
+#####################################################
+####绘制Multiple_mutualist_effects在7个clusters中的柱形比例图
+cl_ratio_pc <- cl_ratio
+for (i in 1:5) {
+  cl_ratio_pc[,i] <- round(cl_ratio_pc[,i]/cl_ratio_pc[,5],3)*100
+}
+cl_ratio_pc <- as.matrix(t(cl_ratio_pc))
+
+################
+###Rhizobium_only_affacted富集分析
+a1 <- cl_ratio$`Rhizobium only`[2:8] #Rhizobium_only_affacted genes in cluster
+b1 <- cl_ratio$`Rhizobium only`[1]-a1 #Rhizobium_only_affacted genes not in cluster
+c1 <- cl_ratio$Freq[2:8]-a1 #all not Rhizobium_only_affacted genes in cluster
+d1 <- cl_ratio$Freq[1]-(a1+b1+c1) #all not Rhizobium_only_affacted genes not in cluster
+e1 <- round(cl_ratio$`Rhizobium only`[1]/cl_ratio$Freq[1]*cl_ratio$Freq[2:8],0) #expected number of genes
+
+R_affacted <- matrix( , nrow = 7, ncol = 8, 
+                      dimnames = list(row.names(cl_ratio)[2:8],
+                                      c("R_affacted_in_cluster","R_affacted_not_in_cluster",
+                                        "not_R_affacted_in_cluster","not_R_affacted_not_in_cluster",
+                                        "Expected","p-value","FDR","sig")))
+
+for (i in 1:7) {
+  R_affacted[i,1:5] <- c(a1[i],b1[i],c1[i],d1[i],e1[i])
+  ft <- fisher.test(matrix(as.numeric(R_affacted[i,1:4]),nrow = 2))
+  
+  R_affacted[i,6] <- ft$p.value
+}
+
+# Perform p-value adjustments and add to data frame
+R_affacted[,7] <- round(p.adjust(R_affacted[,6], method = "hochberg"),3)
+
+###
+for (i in 1:7) {
+  if(R_affacted[i,7] > 0.05){
+    R_affacted[i,8] = ""
+  } 
+  else if (R_affacted[i,7] > 0.01) {
+    R_affacted[i,8] = "*"
+  }
+  else if (R_affacted[i,7] > 0.001) {
+    R_affacted[i,8] = "**"
+  }
+  else (R_affacted[i,8] = "***")
+}
+
+R_affacted <- as.data.frame(R_affacted)
+###########################################
+###
+windows(4,4)
+bp <- barplot(cl_ratio_pc[1,], col = "darkgrey", ylim = c(0,10), axes = F, 
+              cex.axis = 0.8, cex.names = 0.8, las=2, xpd = T)
+
+title(main = "Rhizobium only affacted", cex.main = 0.8, 
+      ylab="Proportion of genes (%)", cex.lab = 0.8)
+
+axis(2, at = seq(0, 10, 2))
+abline(h=c(0,cl_ratio_pc[1,1]), col=c("black","red"))
+
+CE <- paste(as.character(R_affacted$R_affacted_in_cluster),"|", as.character(R_affacted$Expected),sep = "")
+FS <- paste(as.character(R_affacted$FDR), as.character(R_affacted$sig))
+
+text(bp, 1.1+cl_ratio_pc[1,], cex = 0.6, col = "black", labels = c("",CE))
+text(bp, 0.5+cl_ratio_pc[1,], cex = 0.6, col = "black", labels = c("",FS))
+
+
+################
+###AMF_only_affacted富集分析
+a2 <- cl_ratio$`AMF only`[2:8] #AMF_only_affacted genes in cluster
+b2 <- cl_ratio$`AMF only`[1]-a2 #AMF_only_affacted genes not in cluster
+c2 <- cl_ratio$Freq[2:8]-a2 #all not AMF_only_affacted genes in cluster
+d2 <- cl_ratio$Freq[1]-(a2+b2+c2) #all not AMF_only_affacted genes not in cluster
+e2 <- round(cl_ratio$`AMF only`[1]/cl_ratio$Freq[1]*cl_ratio$Freq[2:8],0) #expected number of genes
+
+M_affacted <- matrix( , nrow = 7, ncol = 8, 
+                      dimnames = list(row.names(cl_ratio)[2:8],
+                                      c("M_affacted_in_cluster","M_affacted_not_in_cluster",
+                                        "not_M_affacted_in_cluster","not_M_affacted_not_in_cluster",
+                                        "Expected","p-value","FDR","sig")))
+
+for (i in 1:7) {
+  M_affacted[i,1:5] <- c(a2[i],b2[i],c2[i],d2[i],e2[i])
+  ft <- fisher.test(matrix(as.numeric(M_affacted[i,1:4]),nrow = 2))
+  
+  M_affacted[i,6] <- ft$p.value
+}
+
+# Perform p-value adjustments and add to data frame
+M_affacted[,7] <- round(p.adjust(M_affacted[,6], method = "hochberg"),3)
+
+###
+for (i in 1:7) {
+  if(M_affacted[i,7] > 0.05){
+    M_affacted[i,8] = ""
+  } 
+  else if (M_affacted[i,7] > 0.01) {
+    M_affacted[i,8] = "*"
+  }
+  else if (M_affacted[i,7] > 0.001) {
+    M_affacted[i,8] = "**"
+  }
+  else (M_affacted[i,8] = "***")
+}
+
+M_affacted <- as.data.frame(M_affacted)
+###########################################
+###
+windows(4,4)
+bp <- barplot(cl_ratio_pc[2,], col = "darkgrey", ylim = c(0,70), axes = F, 
+              cex.axis = 0.8, cex.names = 0.8, las=2, xpd = T)
+
+title(main = "AMF only affacted", cex.main = 0.8, 
+      ylab="Proportion of genes (%)", cex.lab = 0.8)
+
+axis(2, at = seq(0, 70, 5))
+abline(h=c(0,cl_ratio_pc[2,1]), col=c("black","red"))
+
+CE <- paste(as.character(M_affacted$M_affacted_in_cluster),"|", as.character(M_affacted$Expected),sep = "")
+FS <- paste(as.character(M_affacted$FDR), as.character(M_affacted$sig))
+
+text(bp, 4+cl_ratio_pc[2,], cex = 0.6, col = "black", labels = c("",CE))
+text(bp, 2+cl_ratio_pc[2,], cex = 0.6, col = "black", labels = c("",FS))
+
+###Additively_affacted富集分析
+a3 <- cl_ratio$`Additively`[2:8] #Additively_affacted genes in cluster
+b3 <- cl_ratio$`Additively`[1]-a3 #Additively_affacted genes not in cluster
+c3 <- cl_ratio$Freq[2:8]-a3 #all not Additively_affacted genes in cluster
+d3 <- cl_ratio$Freq[1]-(a3+b3+c3) #all not Additively_affacted genes not in cluster
+e3 <- round(cl_ratio$`Additively`[1]/cl_ratio$Freq[1]*cl_ratio$Freq[2:8],0) #expected number of genes
+
+Add_affacted <- matrix( , nrow = 7, ncol = 8, 
+                        dimnames = list(row.names(cl_ratio)[2:8],
+                                        c("Add_affacted_in_cluster","Add_affacted_not_in_cluster",
+                                          "not_Add_affacted_in_cluster","not_Add_affacted_not_in_cluster",
+                                          "Expected","p-value","FDR","sig")))
+
+for (i in 1:7) {
+  Add_affacted[i,1:5] <- c(a3[i],b3[i],c3[i],d3[i],e3[i])
+  ft <- fisher.test(matrix(as.numeric(Add_affacted[i,1:4]),nrow = 2))
+  
+  Add_affacted[i,6] <- ft$p.value
+}
+
+# Perform p-value adjustments and add to data frame
+Add_affacted[,7] <- round(p.adjust(Add_affacted[,6], method = "hochberg"),3)
+
+###
+for (i in 1:7) {
+  if(Add_affacted[i,7] > 0.05){
+    Add_affacted[i,8] = ""
+  } 
+  else if (Add_affacted[i,7] > 0.01) {
+    Add_affacted[i,8] = "*"
+  }
+  else if (Add_affacted[i,7] > 0.001) {
+    Add_affacted[i,8] = "**"
+  }
+  else (Add_affacted[i,8] = "***")
+}
+
+Add_affacted <- as.data.frame(Add_affacted)
+###########################################
+###
+windows(4,4)
+bp <- barplot(cl_ratio_pc[3,], col = "darkgrey", ylim = c(0,10), axes = F, 
+              cex.axis = 0.8, cex.names = 0.8, las=2, xpd = T)
+
+title(main = "Additively affacted", cex.main = 0.8, 
+      ylab="Proportion of genes (%)", cex.lab = 0.8)
+
+axis(2, at = seq(0, 10, 2))
+abline(h=c(0,cl_ratio_pc[3,1]), col=c("black","red"))
+
+CE <- paste(as.character(Add_affacted$Add_affacted_in_cluster),"|", as.character(Add_affacted$Expected),sep = "")
+FS <- paste(as.character(Add_affacted$FDR), as.character(Add_affacted$sig))
+
+text(bp, 1.1+cl_ratio_pc[3,], cex = 0.6, col = "black", labels = c("",CE))
+text(bp, 0.5+cl_ratio_pc[3,], cex = 0.6, col = "black", labels = c("",FS))
+
+#################################################
+###Non-additively_affacted富集分析
+a4 <- cl_ratio$`Non-additively`[2:8] #Non-additively_affacted genes in cluster
+b4 <- cl_ratio$`Non-additively`[1]-a4 #Non-additively_affacted genes not in cluster
+c4 <- cl_ratio$Freq[2:8]-a4 #all not Non-additively_affacted genes in cluster
+d4 <- cl_ratio$Freq[1]-(a4+b4+c4) #all not Non-additively_affacted genes not in cluster
+e4 <- round(cl_ratio$`Non-additively`[1]/cl_ratio$Freq[1]*cl_ratio$Freq[2:8],0) #expected number of genes
+
+Nonadd_affacted <- matrix( , nrow = 7, ncol = 8, 
+                           dimnames = list(row.names(cl_ratio)[2:8],
+                                           c("Nonadd_affacted_in_cluster","Nonadd_affacted_not_in_cluster",
+                                             "not_Nonadd_affacted_in_cluster","not_Nonadd_affacted_not_in_cluster",
+                                             "Expected","p-value","FDR","sig")))
+
+for (i in 1:7) {
+  Nonadd_affacted[i,1:5] <- c(a4[i],b4[i],c4[i],d4[i],e4[i])
+  ft <- fisher.test(matrix(as.numeric(Nonadd_affacted[i,1:4]),nrow = 2))
+  
+  Nonadd_affacted[i,6] <- ft$p.value
+}
+
+# Perform p-value adjustments and add to data frame
+Nonadd_affacted[,7] <- round(p.adjust(Nonadd_affacted[,6], method = "hochberg"),3)
+
+###
+for (i in 1:7) {
+  if(Nonadd_affacted[i,7] > 0.05){
+    Nonadd_affacted[i,8] = ""
+  } 
+  else if (Nonadd_affacted[i,7] > 0.01) {
+    Nonadd_affacted[i,8] = "*"
+  }
+  else if (Nonadd_affacted[i,7] > 0.001) {
+    Nonadd_affacted[i,8] = "**"
+  }
+  else (Nonadd_affacted[i,8] = "***")
+}
+
+Nonadd_affacted <- as.data.frame(Nonadd_affacted)
+###########################################
+###
+windows(4,4)
+bp <- barplot(cl_ratio_pc[4,], col = "darkgrey", ylim = c(0,3), axes = F, 
+              cex.axis = 0.8, cex.names = 0.8, las=2, xpd = T)
+
+title(main = "Non-additively affacted", cex.main = 0.8, 
+      ylab="Proportion of genes (%)", cex.lab = 0.8)
+
+axis(2, at = seq(0, 3, 0.5))
+abline(h=c(0,cl_ratio_pc[4,1]), col=c("black","red"))
+
+CE <- paste(as.character(Nonadd_affacted$Nonadd_affacted_in_cluster),"|", as.character(Nonadd_affacted$Expected),sep = "")
+FS <- paste(as.character(Nonadd_affacted$FDR), as.character(Nonadd_affacted$sig))
+
+text(bp, 0.2+cl_ratio_pc[4,], cex = 0.6, col = "black", labels = c("",CE))
+text(bp, 0.1+cl_ratio_pc[4,], cex = 0.6, col = "black", labels = c("",FS))
+
+
+####################################################################################################
+####################################################################################################
+####################################################################################################
+
+###Figure S2-B
+#############################################################
+###3）富集GO热图
+enriched_GO_BP <- read.csv(file = "enriched_GO_biological_process.csv") ###来自argiGO富集分析汇总信息
+
+go_c1 <- read.csv(file = "cluster1_GEA.csv")
+go_c2 <- read.csv(file = "cluster2_GEA.csv")
+go_c3 <- read.csv(file = "cluster3_GEA.csv")
+go_c4 <- read.csv(file = "cluster4_GEA.csv")
+go_c5 <- read.csv(file = "cluster5_GEA.csv")
+go_c6 <- read.csv(file = "cluster6_GEA.csv")
+go_c7 <- read.csv(file = "cluster7_GEA.csv")
+
+enriched_GO_BP_c1 <- merge.data.frame(enriched_GO_BP, go_c1[,c(3,12)], by="GO_ID", all.x = T)
+enriched_GO_BP_c2 <- merge.data.frame(enriched_GO_BP_c1, go_c2[,c(3,12)], by="GO_ID", all.x = T)
+enriched_GO_BP_c3 <- merge.data.frame(enriched_GO_BP_c2, go_c3[,c(3,12)], by="GO_ID", all.x = T)
+enriched_GO_BP_c4 <- merge.data.frame(enriched_GO_BP_c3, go_c4[,c(3,12)], by="GO_ID", all.x = T)
+enriched_GO_BP_c5 <- merge.data.frame(enriched_GO_BP_c4, go_c5[,c(3,12)], by="GO_ID", all.x = T)
+enriched_GO_BP_c6 <- merge.data.frame(enriched_GO_BP_c5, go_c6[,c(3,12)], by="GO_ID", all.x = T)
+enriched_GO_BP_c7 <- merge.data.frame(enriched_GO_BP_c6, go_c7[,c(3,12)], by="GO_ID", all.x = T)
+
+names(enriched_GO_BP_c7) <- c("GO_ID","TERM","Cluster1","Cluster2","Cluster3","Cluster4","Cluster5","Cluster6","Cluster7")
+enriched_GO_BP_c7[is.na(enriched_GO_BP_c7)] <- 1
+#write.csv(enriched_GO_BP_c7, file = "enriched_GO_BP_c7.csv")
+###排序后重新读取
+
+enriched_GO_BP_c7 <- read.csv(file = "enriched_GO_BP_c7.csv", row.names = 1)
+
+
+enriched_GO_BP_c7[,3:9] <- -log10(enriched_GO_BP_c7[,3:9])
+row.names(enriched_GO_BP_c7) <- paste(enriched_GO_BP_c7$GO,"|",enriched_GO_BP_c7$TERM)
+
+-log10(0.05)
+
+###Figure S1-B
+windows(6,9)
+Heatmap(enriched_GO_BP_c7[,3:9], name = "-log10(FDR)", 
+        col = colorRamp2(c(0,1.3,9), c("white","yellow", "red")), 
+        cluster_columns = F, cluster_rows = F,
+        cell_fun = function(i, j, x, y, width, height, fill) {
+          grid.rect(x = x, y = y, width = width, height = height, gp = gpar(col = "black", fill = NA))
+        },
+        show_row_names = T, row_names_gp = gpar(fontsize = 8),column_names_gp = gpar(fontsize = 8),
+        column_names_side = "bottom",
+        row_dend_width = unit(4, "cm"))
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+####################################################################################################
+
+###Figure S3
+#############################################################
+###2）共生markers的表达谱
+gene_fpkm <- read.csv(file = "fpkmMatrix.csv", header = T, row.names = 1)
+gene_rep_fpkm <- read.csv(file = "repFpkmMatrix.csv", header = T, row.names = 1)
+
+sample_names <- c("A17_1","A17_2","A17_3","A17_4", "A17_5",
+                  "dmi2_1","dmi2_2","dmi2_3","dmi2_4","dmi2_5",
+                  "dmi3_1","dmi3_2","dmi3_3","dmi3_4","dmi3_5",
+                  "ipd3_1","ipd3_2","ipd3_3","ipd3_4","ipd3_5",
+                  "lyk3_1","lyk3_2","lyk3_3","lyk3_4","lyk3_5",
+                  "nfp_1","nfp_2","nfp_3","nfp_4","nfp_5",
+                  "pt4_1","pt4_2","pt4_3","pt4_4","pt4_5")
+
+names(gene_rep_fpkm) <- sample_names
+
+gene.id <- read.csv(file = "gene_id.csv", header = T, row.names = 1)
+###来源：diff_out/genes.fpkm_tracking
+###添加信息
+sym_markers <- read.csv(file="symbiosis_biomarkers.csv") ###来自共生相关文献汇总
+#sym_markers_cluster_notes <- merge.data.frame(sym_markers,seven_cluster_locus_id_notes,
+#                                              by.x = "Locus",by.y = "gene_short_name", all.x = T)
+#sym_markers <- sym_markers_cluster_notes[,c(1:3,12)]
+#write.csv(sym_markers,file="symbiosis_biomarkers.csv")
+
+sym_markers_ids <- merge.data.frame(sym_markers, gene.id, by.x = "Locus", by.y = "gene_short_name")
+row.names(sym_markers_ids) <- sym_markers_ids$gene_id
+###有四个基因是共表达的
+
+sym_markers_rep_fpkm <- gene_rep_fpkm[row.names(gene_rep_fpkm) %in% sym_markers_ids$gene_id,]
+sym_markers_rep_fpkm$gene_id <- row.names(sym_markers_rep_fpkm)
+sym_markers_fpkm <- gene_fpkm[row.names(gene_fpkm) %in% sym_markers_ids$gene_id,]
+sym_markers_fpkm$gene_id <- row.names(sym_markers_fpkm)
+
+sym_markers_heatmap1 <- merge.data.frame(sym_markers_ids[,c(1:4,7)], sym_markers_fpkm, by="gene_id")
+sym_markers_heatmap2 <- merge.data.frame(sym_markers_heatmap1, sym_markers_rep_fpkm, by="gene_id")
+names(sym_markers_heatmap2)
+sym_markers_heatmap2 <- sym_markers_heatmap2[-25,]
+
+sym_markers_heatmap_rep.log.scale <- decostand(log(sym_markers_heatmap2[,13:47]+1,base = 2), "standardize", MARGIN = 1)
+sym_markers_heatmap.log <- log(sym_markers_heatmap2[,6:12]+1,base = 2) ###有两个gst1
+
+names(sym_markers_heatmap_rep.log.scale)
+sym_markers_heatmap_rep.log.scale.order <- sym_markers_heatmap_rep.log.scale[,c(1:5,21:25,26:30,16:20,6:10,11:15,31:35)]
+
+names(sym_markers_heatmap.log)
+sym_markers_heatmap.log.order <- sym_markers_heatmap.log[,c(1,5,6,4,2,3,7)]
+row.names(sym_markers_heatmap.log.order) <- paste(sym_markers_heatmap2$nsme,"(", sym_markers_heatmap2$Cluster, ")", sep = "")
+
+###heatmap plot
+#mycol <- colorRamp2(c(-2, 0, 2), c("blue", "white", "red")) ###照顾红绿色盲
+mycol <- colorRamp2(c(-2, 0, 2), c("#0093A9", "white", "#AD1E47")) ###参考doi:10.1038/nature21417取色
+
+
+Heatmap5 <- Heatmap(sym_markers_heatmap_rep.log.scale.order, name = "scale(log(FPKM+1))", col = mycol, 
+                    cluster_columns = F, column_names_gp = gpar(fontsize = 8),
+                    show_row_names = F,
+                    clustering_distance_columns = "pearson",
+                    clustering_method_columns = "average",
+                    clustering_distance_rows = "pearson",
+                    clustering_method_rows = "average",
+                    row_dend_width = unit(2, "cm"))
+
+windows(9,9)
+Heatmap5
+###与前面分析完全一致
+
+###Figure S3
+
+windows(12,12)
+Heatmap5 + 
+  Heatmap(sym_markers_heatmap.log.order, width = unit(30, "mm"),
+          name = paste("log(FPKM+1)"),
+          col = colorRamp2(c(0, 10), c("#0093A9","#AD1E47")), 
+          column_names_side = "bottom", show_row_names = T, row_names_gp = gpar(fontsize = 8),
+          cluster_columns = F,column_names_gp = gpar(fontsize = 8,angle=45),
+          show_heatmap_legend = T)
+
+
+
+
+
+

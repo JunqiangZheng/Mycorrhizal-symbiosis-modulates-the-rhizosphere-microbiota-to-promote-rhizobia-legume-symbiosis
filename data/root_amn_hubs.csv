@@ -1,0 +1,12 @@
+"","Row.names","name","betweenness","closeness","degree","Phylum_color","Order_color","Name","Domain","Phylum","Class","Order","Family","Genus","Size"
+"10","OTU11","OTU11",1034.25,0.0028546063355133,53,"#00FFFFFF","Actinomycetales","Actinomycetales","Bacteria","Actinobacteria","Actinobacteridae","Actinomycetales","Thermomonosporaceae","Spirillospora",102989
+"33","OTU13","OTU13",571,0.00267929148815887,48,"#00FFFFFF","Actinomycetales","Micromonospora","Bacteria","Actinobacteria","Actinobacteridae","Actinomycetales","Micromonosporaceae","Micromonospora",60840
+"55","OTU17","OTU17",1798.33333333333,0.00291783380018674,50,"#00FFFFFF","Actinomycetales","Lechevalieria","Bacteria","Actinobacteria","Actinobacteridae","Actinomycetales","Pseudonocardiaceae","Lechevalieria",56000
+"94","OTU23","OTU23",511.25,0.00269810134608276,59,"#00FFFFFF","Actinomycetales","Actinoplanes","Bacteria","Actinobacteria","Actinobacteridae","Actinomycetales","Micromonosporaceae","Actinoplanes",48991
+"106","OTU252","OTU252",459.666666666667,0.00272998037144113,57,"#FF8000FF","Others","Chitinophagaceae","Bacteria","Bacteroidetes","Sphingobacteriia","Sphingobacteriales","Chitinophagaceae","Niastella",8218
+"122","OTU289","OTU289",759.458333333333,0.00265269580210889,47,"#FF8000FF","Others","Lacibacter","Bacteria","Bacteroidetes","Sphingobacteriia","Sphingobacteriales","Chitinophagaceae","Lacibacter",23432
+"162","OTU4","OTU4",519.833333333333,0.00275767737380869,54,"#00FFFFFF","Actinomycetales","Streptomyces","Bacteria","Actinobacteria","Actinobacteridae","Actinomycetales","Streptomycetaceae","Streptomyces",76043
+"205","OTU533","OTU533",866.020833333333,0.00267396123291005,59,"#0080FFFF","Xanthomonadales","Steroidobacter","Bacteria","Gammaproteobacteria","Xanthomonadales","Xanthomonadales","Sinobacteraceae","Steroidobacter",15328
+"213","OTU575","OTU575",1133.5,0.00267220347226119,47,"#0080FFFF","Xanthomonadales","Xanthomonadaceae","Bacteria","Gammaproteobacteria","Xanthomonadales","Xanthomonadales","Xanthomonadaceae","Luteimonas",20455
+"259","OTU76","OTU76",1050,0.00265498473383778,53,"orangered","Rhizobiales","Bradyrhizobium","Bacteria","Alphaproteobacteria","Rhizobiales","Rhizobiales","Bradyrhizobiaceae","Bradyrhizobium",16535
+"298","OTU99","OTU99",639,0.00268205091069039,52,"#FFFF00FF","Burkholderiales","Pelomonas","Bacteria","Betaproteobacteria","Burkholderiales","Burkholderiales","Comamonadaceae","Pelomonas",21095

@@ -1,0 +1,256 @@
+Class,GO_Name,GO_ID,GO_Level,P_value,EnrichmentScore,HitsGenesCountsInSelectedSet,HitsGenesCountsInBackground,AllGenesCountsInSelectedSet,AllGenesCountsInBackground,GenesOfSelectedSetInGOterm,corrected p-value(BH method)
+Molecular function,peroxidase activity,GO:0004601,5,6.67E-07,14.07257143,7,1.75E+02,7.00E+01,24627,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",9.54E-05
+Molecular function,"oxidoreductase activity, acting on peroxide as acceptor",GO:0016684,4,7.48E-07,13.83539326,7,1.78E+02,7.00E+01,24627,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",5.35E-05
+Molecular function,antioxidant activity,GO:0016209,2,1.29E-06,12.76010363,7,1.93E+02,7.00E+01,24627,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",6.13E-05
+Molecular function,structural constituent of ribosome,GO:0003735,3,2.34E-06,7.741634649,9,4.09E+02,7.00E+01,24627,"Medtr4g034720,Medtr4g051350,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",8.37E-05
+Molecular function,structural molecule activity,GO:0005198,2,7.09E-06,6.751233628,9,4.69E+02,7.00E+01,24627,"Medtr4g034720,Medtr4g051350,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",2.03E-04
+Molecular function,tetrapyrrole binding,GO:0046906,4,2.99E-05,4.976156799,10,7.07E+02,7.00E+01,24627,"Medtr4g050860,Medtr2g084020,Medtr1g022970,Medtr4g050850,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr4g051370,Medtr7g072510,Medtr2g029750,",7.13E-04
+Molecular function,cofactor binding,GO:0048037,3,8.48E-05,3.433622909,13,1.33E+03,7.00E+01,24627,"Medtr4g050860,Medtr2g084020,Medtr1g022970,Medtr4g050850,Medtr2g029560,Medtr2g084010,Medtr2g043850,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr4g035040,Medtr7g072510,Medtr2g029750,",0.001733036
+Molecular function,heme binding,GO:0020037,5,1.05E-04,4.782973673,9,6.62E+02,7.00E+01,24627,"Medtr4g050860,Medtr2g084020,Medtr1g022970,Medtr4g050850,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",0.001869296
+Molecular function,phosphoric ester hydrolase activity,GO:0042578,5,1.55E-04,7.458960121,6,2.83E+02,7.00E+01,24627,"Medtr8g015950,Medtr8g087820,Medtr7g104330,Medtr6g013050,Medtr0200s0050,Medtr4g109600,",0.002456164
+Molecular function,"hydrolase activity, acting on ester bonds",GO:0016788,4,0.003579314,3.176652693,8,8.86E+02,7.00E+01,24627,"Medtr8g015950,Medtr8g087820,Medtr7g104330,Medtr7g087190,Medtr6g013050,Medtr0200s0050,Medtr4g109600,Medtr8g079120,",0.03412279
+Molecular function,oxidoreductase activity,GO:0016491,3,0.009423034,2.050935298,13,2.23E+03,7.00E+01,24627,"Medtr4g050860,Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr2g043850,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr4g035040,Medtr7g072510,Medtr4g034790,Medtr2g029750,",0.04491646
+Molecular function,catalytic activity,GO:0003824,2,0.018709914,1.254985561,45,1.26E+04,7.00E+01,24627,"Medtr4g050860,Medtr8g015950,Medtr4g050863,Medtr3g053890,Medtr8g087820,Medtr2g084020,Medtr1g064260,Medtr4g051120,Medtr2g095920,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr4g051130,Medtr7g104330,Medtr5g009120,Medtr8g089585,Medtr6g071695,Medtr1g116120,Medtr7g075890,Medtr2g043850,Medtr2g096040,Medtr7g087190,Medtr1g054205,Medtr8g016160,Medtr4g051370,Medtr4g006100,Medtr6g013050,Medtr1g100210,Medtr4g117330,Medtr1g017020,Medtr4g035040,Medtr3g117750,Medtr4g051380,Medtr3g080810,Medtr4g034770,Medtr7g072510,Medtr4g034690,Medtr8g079900,Medtr0200s0050,Medtr4g051103,Medtr4g107220,Medtr4g034790,Medtr4g109600,Medtr8g079120,Medtr2g029750,",0.078691696
+Cellular component,plastid,GO:0009536,6,2.26E-08,3.729470511,22,1.74E+03,6.10E+01,17993,"Medtr4g051097,Medtr7g088880,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr1g116120,Medtr4g034750,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr4g035040,Medtr4g034770,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,",2.21E-06
+Cellular component,photosynthetic membrane,GO:0034357,5,4.92E-07,7.844872689,10,3.76E+02,61,17993,"Medtr4g051097,Medtr4g050860,Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g006100,Medtr4g051375,Medtr4g034770,Medtr4g034690,Medtr4g034790,",2.41E-05
+Cellular component,thylakoid part,GO:0044436,4,8.08E-07,7.429904612,10,3.97E+02,61,17993,"Medtr4g051097,Medtr4g050860,Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g006100,Medtr4g051375,Medtr4g034770,Medtr4g034690,Medtr4g034790,",2.64E-05
+Cellular component,protein-containing complex,GO:0032991,2,4.87E-06,3.092923316,19,1.81E+03,61,17993,"Medtr4g051097,Medtr7g088880,Medtr4g034720,Medtr4g050850,Medtr4g051350,Medtr0094s0110,Medtr4g034750,Medtr4g051370,Medtr4g051380,Medtr4g051375,Medtr4g034770,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034810,",1.19E-04
+Cellular component,thylakoid,GO:0009579,4,5.51E-06,5.995268559,10,4.92E+02,61,17993,"Medtr4g051097,Medtr4g050860,Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g006100,Medtr4g051375,Medtr4g034770,Medtr4g034690,Medtr4g034790,",1.08E-04
+Cellular component,ribosome,GO:0005840,6,1.32E-05,5.422191418,10,5.44E+02,61,17993,"Medtr4g034720,Medtr4g051350,Medtr0094s0110,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",2.16E-04
+Cellular component,thylakoid membrane,GO:0042651,6,1.33E-05,7.2607314,8,3.25E+02,61,17993,"Medtr4g051097,Medtr4g050860,Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g006100,Medtr4g034690,Medtr4g034790,",1.86E-04
+Cellular component,membrane protein complex,GO:0098796,3,4.23E-05,6.177323835,8,3.82E+02,61,17993,"Medtr4g051097,Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g051375,Medtr4g034770,Medtr4g006080,Medtr4g051103,",5.18E-04
+Cellular component,photosystem,GO:0009521,5,6.76E-05,11.70504814,5,126,61,17993,"Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g051375,Medtr4g034770,",7.36E-04
+Cellular component,ribonucleoprotein complex,GO:1990904,3,1.14E-04,4.201812153,10,702,61,17993,"Medtr4g034720,Medtr4g051350,Medtr0094s0110,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",0.001118609
+Cellular component,cytoplasmic part,GO:0044444,4,2.14E-04,1.804448694,30,4904,61,17993,"Medtr4g051097,Medtr7g088880,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr4g051350,Medtr1g116120,Medtr0094s0110,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr1g100210,Medtr4g035040,Medtr4g051380,Medtr4g034770,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,Medtr4g034810,",0.001749109
+Cellular component,chloroplast thylakoid,GO:0009534,7,2.39E-04,5.61078938,7,368,61,17993,"Medtr4g051097,Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g006100,Medtr4g034690,Medtr4g034790,",0.001799244
+Cellular component,plastid thylakoid,GO:0031976,6,2.39E-04,5.61078938,7,368,61,17993,"Medtr4g051097,Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g006100,Medtr4g034690,Medtr4g034790,",0.001799244
+Cellular component,chloroplast part,GO:0044434,6,3.21E-04,3.401089459,11,954,61,17993,"Medtr4g051097,Medtr7g088880,Medtr4g050850,Medtr1g116120,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr4g034690,Medtr7g094710,Medtr4g006080,Medtr4g034790,",0.002093984
+Cellular component,plastid part,GO:0044435,5,3.83E-04,3.331251893,11,974,61,17993,"Medtr4g051097,Medtr7g088880,Medtr4g050850,Medtr1g116120,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr4g034690,Medtr7g094710,Medtr4g006080,Medtr4g034790,",0.002343075
+Cellular component,cytoplasm,GO:0005737,4,4.18E-04,1.712998053,31,5338,61,17993,"Medtr4g051097,Medtr7g088880,Medtr8g087820,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr4g051350,Medtr1g116120,Medtr0094s0110,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr1g100210,Medtr4g035040,Medtr4g051380,Medtr4g034770,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,Medtr4g034810,",0.002409396
+Cellular component,chloroplast thylakoid membrane,GO:0009535,8,4.90E-04,5.979065131,6,296,61,17993,"Medtr4g051097,Medtr4g050850,Medtr4g051370,Medtr4g006100,Medtr4g034690,Medtr4g034790,",0.002665195
+Cellular component,plastid thylakoid membrane,GO:0055035,7,5.07E-04,5.938937177,6,298,61,17993,"Medtr4g051097,Medtr4g050850,Medtr4g051370,Medtr4g006100,Medtr4g034690,Medtr4g034790,",0.002616213
+Cellular component,intracellular part,GO:0044424,3,0.001027983,1.469373012,39,7829,61,17993,"Medtr4g051097,Medtr4g050860,Medtr7g088880,Medtr8g087820,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr4g051350,Medtr8g077390,Medtr1g116120,Medtr0094s0110,Medtr4g114550,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr1g100210,Medtr8g077420,Medtr4g035040,Medtr4g051380,Medtr4g051375,Medtr4g034770,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr1g074310,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,Medtr4g034810,",0.004797253
+Cellular component,intracellular organelle,GO:0043229,4,0.00156274,1.513095773,35,6823,61,17993,"Medtr4g051097,Medtr7g088880,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr4g051350,Medtr8g077390,Medtr1g116120,Medtr0094s0110,Medtr4g114550,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr8g077420,Medtr4g035040,Medtr4g051380,Medtr4g034770,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr1g074310,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,Medtr4g034810,",0.006961296
+Cellular component,organelle,GO:0043226,2,0.001600314,1.511323739,35,6831,61,17993,"Medtr4g051097,Medtr7g088880,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr4g051350,Medtr8g077390,Medtr1g116120,Medtr0094s0110,Medtr4g114550,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr8g077420,Medtr4g035040,Medtr4g051380,Medtr4g034770,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr1g074310,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,Medtr4g034810,",0.006818729
+Cellular component,intracellular,GO:0005622,3,0.00236609,1.416539996,39,8121,61,17993,"Medtr4g051097,Medtr4g050860,Medtr7g088880,Medtr8g087820,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr4g051350,Medtr8g077390,Medtr1g116120,Medtr0094s0110,Medtr4g114550,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr1g100210,Medtr8g077420,Medtr4g035040,Medtr4g051380,Medtr4g051375,Medtr4g034770,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr1g074310,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,Medtr4g034810,",0.009661534
+Cellular component,organelle subcompartment,GO:0031984,5,0.002666761,3.713615992,7,556,61,17993,"Medtr4g051097,Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g006100,Medtr4g034690,Medtr4g034790,",0.010453702
+Cellular component,extracellular region,GO:0005576,2,0.004059635,3.441284153,7,600,61,17993,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",0.014208721
+Cellular component,intracellular membrane-bounded organelle,GO:0043231,5,0.005245961,1.488763205,31,6142,61,17993,"Medtr4g051097,Medtr7g088880,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr8g077390,Medtr1g116120,Medtr4g114550,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr8g077420,Medtr4g035040,Medtr4g034770,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr1g074310,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,",0.017727729
+Cellular component,cell part,GO:0044464,2,0.005854157,1.333221887,41,9071,61,17993,"Medtr4g051097,Medtr4g050860,Medtr7g088880,Medtr8g087820,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr4g051350,Medtr8g077390,Medtr1g116120,Medtr0094s0110,Medtr4g114550,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr1g100210,Medtr8g077420,Medtr1g017020,Medtr4g035040,Medtr4g051380,Medtr4g051375,Medtr4g034770,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr8g039540,Medtr1g074310,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,Medtr4g034810,",0.019123581
+Cellular component,membrane-bounded organelle,GO:0043227,3,0.006658103,1.467498573,31,6231,61,17993,"Medtr4g051097,Medtr7g088880,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr8g077390,Medtr1g116120,Medtr4g114550,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr8g077420,Medtr4g035040,Medtr4g034770,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr1g074310,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,",0.021048197
+Cellular component,non-membrane-bounded organelle,GO:0043228,3,0.007428797,2.421734098,10,1218,61,17993,"Medtr4g034720,Medtr4g051350,Medtr0094s0110,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",0.022750691
+Cellular component,intracellular non-membrane-bounded organelle,GO:0043232,5,0.007428797,2.421734098,10,1218,61,17993,"Medtr4g034720,Medtr4g051350,Medtr0094s0110,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",0.022750691
+Cellular component,cell,GO:0005623,2,0.007495011,1.318397006,41,9173,61,17993,"Medtr4g051097,Medtr4g050860,Medtr7g088880,Medtr8g087820,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr4g050850,Medtr4g051130,Medtr4g051350,Medtr8g077390,Medtr1g116120,Medtr0094s0110,Medtr4g114550,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr1g100210,Medtr8g077420,Medtr1g017020,Medtr4g035040,Medtr4g051380,Medtr4g051375,Medtr4g034770,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr7g094710,Medtr8g039540,Medtr1g074310,Medtr4g006080,Medtr4g051103,Medtr4g051410,Medtr4g034790,Medtr4g109600,Medtr4g034810,",0.021603266
+Cellular component,chloroplast,GO:0009507,7,0.007955443,2.166221883,12,1634,61,17993,"Medtr4g051097,Medtr7g088880,Medtr4g050850,Medtr4g051130,Medtr1g116120,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr4g034690,Medtr7g094710,Medtr4g006080,Medtr4g034790,",0.022275241
+Cellular component,chloroplast stroma,GO:0009570,7,0.028264418,2.914695782,5,506,61,17993,"Medtr7g088880,Medtr1g116120,Medtr4g051370,Medtr7g080250,Medtr4g034690,",0.05539826
+Cellular component,plastid stroma,GO:0009532,6,0.031503663,2.830779396,5,521,61,17993,"Medtr7g088880,Medtr1g116120,Medtr4g051370,Medtr7g080250,Medtr4g034690,",0.057173314
+Biological process,antibiotic metabolic process,GO:0016999,5,6.80E-08,14.70461538,8,160,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr8g079120,Medtr2g029750,",2.72E-05
+Biological process,hydrogen peroxide catabolic process,GO:0042744,7,1.31E-07,17.7469496,7,116,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",2.63E-05
+Biological process,reactive oxygen species metabolic process,GO:0072593,4,1.42E-07,13.36783217,8,176,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr4g098500,Medtr2g029750,",1.89E-05
+Biological process,antibiotic catabolic process,GO:0017001,6,1.96E-07,16.7369606,7,123,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",1.96E-05
+Biological process,cellular oxidant detoxification,GO:0098869,4,2.88E-07,12.19035472,8,193,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr4g098500,Medtr2g029750,",2.30E-05
+Biological process,hydrogen peroxide metabolic process,GO:0042743,6,3.02E-07,15.71485614,7,131,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",2.01E-05
+Biological process,cellular detoxification,GO:1990748,3,3.24E-07,12.00376766,8,196,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr4g098500,Medtr2g029750,",1.85E-05
+Biological process,detoxification,GO:0098754,2,3.78E-07,11.76369231,8,200,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr4g098500,Medtr2g029750,",1.89E-05
+Biological process,cellular response to toxic substance,GO:0097237,5,3.93E-07,11.70516648,8,201,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr4g098500,Medtr2g029750,",1.75E-05
+Biological process,cofactor catabolic process,GO:0051187,5,4.10E-07,15.02661426,7,137,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",1.64E-05
+Biological process,response to toxic substance,GO:0009636,4,2.57E-06,9.119141324,8,258,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr4g098500,Medtr2g029750,",9.33E-05
+Biological process,photosynthesis,GO:0015979,4,1.69E-05,8.577692308,7,240,65,19116,"Medtr4g050860,Medtr7g088880,Medtr4g050850,Medtr4g051370,Medtr4g051375,Medtr4g034770,Medtr4g034790,",5.63E-04
+Biological process,drug metabolic process,GO:0017144,4,1.86E-05,5.232959212,10,562,65,19116,"Medtr4g051097,Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr4g051103,Medtr8g079120,Medtr2g029750,",5.73E-04
+Biological process,response to oxidative stress,GO:0006979,4,2.73E-05,6.590303814,8,357,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr4g098500,Medtr2g029750,",7.80E-04
+Biological process,drug catabolic process,GO:0042737,5,8.58E-05,6.640794045,7,310,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",0.00228703
+Biological process,cofactor metabolic process,GO:0051186,4,2.90E-04,5.446153846,7,378,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr2g029750,",0.007260909
+Biological process,cellular response to chemical stimulus,GO:0070887,4,3.63E-04,4.028661749,9,657,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr7g072510,Medtr4g098500,Medtr8g079120,Medtr2g029750,",0.008534539
+Biological process,metabolic process,GO:0008152,2,9.08E-04,1.2442115,57,13473,65,19116,"Medtr4g051097,Medtr4g050860,Medtr8g015950,Medtr7g088880,Medtr2g084020,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr2g095920,Medtr1g022970,Medtr4g050850,Medtr2g029560,Medtr2g084010,Medtr4g051130,Medtr4g051350,Medtr7g104330,Medtr5g009120,Medtr8g089585,Medtr1g116120,Medtr7g075890,Medtr2g043850,Medtr2g096040,Medtr4g034750,Medtr4g079170,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr6g013050,Medtr7g080250,Medtr1g100210,Medtr4g117330,Medtr1g017020,Medtr4g035040,Medtr3g117750,Medtr4g051380,Medtr3g080810,Medtr4g051375,Medtr4g034770,Medtr7g072510,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g034690,Medtr8g079900,Medtr1g074310,Medtr0200s0050,Medtr4g051103,Medtr4g051410,Medtr4g098500,Medtr4g107220,Medtr4g034790,Medtr4g109600,Medtr8g079120,Medtr4g034810,Medtr2g029750,",0.020185366
+Biological process,translation,GO:0006412,8,0.001644355,3.255634402,9,813,65,19116,"Medtr4g034720,Medtr4g051350,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",0.034618005
+Biological process,peptide biosynthetic process,GO:0043043,7,0.001758633,3.223910803,9,821,65,19116,"Medtr4g034720,Medtr4g051350,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",0.035172662
+Biological process,peptide metabolic process,GO:0006518,6,0.00203924,3.154744659,9,839,65,19116,"Medtr4g034720,Medtr4g051350,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",0.037077098
+Biological process,cellular catabolic process,GO:0044248,4,0.00203924,3.154744659,9,839,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr1g017020,Medtr3g080810,Medtr7g072510,Medtr2g029750,",0.037077098
+Biological process,amide biosynthetic process,GO:0043604,6,0.002606003,3.042334218,9,870,65,19116,"Medtr4g034720,Medtr4g051350,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",0.043433386
+Biological process,cellular metabolic process,GO:0044237,3,0.002610991,1.359964429,44,9515,65,19116,"Medtr4g051097,Medtr4g050860,Medtr8g015950,Medtr7g088880,Medtr2g084020,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr2g095920,Medtr1g022970,Medtr4g050850,Medtr2g029560,Medtr2g084010,Medtr4g051130,Medtr4g051350,Medtr7g104330,Medtr5g009120,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr6g013050,Medtr1g100210,Medtr4g117330,Medtr1g017020,Medtr3g117750,Medtr4g051380,Medtr3g080810,Medtr4g051375,Medtr4g034770,Medtr7g072510,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr1g074310,Medtr0200s0050,Medtr4g051103,Medtr4g051410,Medtr4g098500,Medtr4g034790,Medtr8g079120,Medtr4g034810,Medtr2g029750,",0.041775849
+Biological process,cellular amide metabolic process,GO:0043603,5,0.003887977,2.864535465,9,924,65,19116,"Medtr4g034720,Medtr4g051350,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051410,Medtr4g034810,",0.059815033
+Biological process,catabolic process,GO:0009056,3,0.006606991,2.638914027,9,1003,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr1g054205,Medtr1g017020,Medtr3g080810,Medtr7g072510,Medtr2g029750,",0.091130909
+Biological process,organonitrogen compound biosynthetic process,GO:1901566,5,0.006937472,2.320671008,11,1394,65,19116,"Medtr4g051097,Medtr4g034720,Medtr4g051350,Medtr4g034750,Medtr4g051380,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr4g051103,Medtr4g051410,Medtr4g034810,",0.092499632
+Biological process,response to chemical,GO:0042221,3,0.007893962,2.088039323,13,1831,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr3g027940,Medtr1g116120,Medtr1g054205,Medtr7g072510,Medtr1g074310,Medtr4g098500,Medtr8g079120,Medtr4g072190,Medtr2g029750,",0.09568439
+Biological process,cellular process,GO:0009987,2,0.011286134,1.232300588,49,11694,65,19116,"Medtr4g051097,Medtr4g050860,Medtr8g015950,Medtr7g088880,Medtr2g084020,Medtr1g064260,Medtr4g034720,Medtr4g051120,Medtr2g095920,Medtr1g022970,Medtr4g050850,Medtr2g029560,Medtr2g084010,Medtr4g051130,Medtr4g051350,Medtr7g104330,Medtr5g009120,Medtr4g114550,Medtr4g034750,Medtr1g054205,Medtr4g051370,Medtr6g013050,Medtr7g080250,Medtr1g100210,Medtr4g117330,Medtr1g017020,Medtr6g015650,Medtr4g035040,Medtr3g117750,Medtr4g051380,Medtr3g080810,Medtr4g051375,Medtr4g034770,Medtr7g072510,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr3g062540,Medtr1g074310,Medtr0200s0050,Medtr4g051103,Medtr4g051410,Medtr4g098500,Medtr4g034790,Medtr8g079120,Medtr4g034810,Medtr2g029750,",0.100321188
+Biological process,cellular response to stimulus,GO:0051716,3,0.017926963,1.881496063,13,2032,65,19116,"Medtr2g084020,Medtr1g022970,Medtr2g029560,Medtr2g084010,Medtr4g114550,Medtr1g054205,Medtr6g015650,Medtr4g035040,Medtr7g072510,Medtr3g062540,Medtr4g098500,Medtr8g079120,Medtr2g029750,",0.132792315
+Biological process,oxidation-reduction process,GO:0055114,3,0.018684018,1.814584534,14,2269,65,19116,"Medtr2g084020,Medtr1g022970,Medtr4g050850,Medtr2g029560,Medtr2g084010,Medtr2g043850,Medtr1g054205,Medtr4g051370,Medtr4g006100,Medtr7g080250,Medtr4g035040,Medtr7g072510,Medtr4g034790,Medtr2g029750,",0.13345727
+Biological process,cellular nitrogen compound biosynthetic process,GO:0044271,5,0.024948265,1.630117128,17,3067,65,19116,"Medtr4g051097,Medtr4g034720,Medtr4g051120,Medtr2g095920,Medtr4g051130,Medtr4g051350,Medtr4g034750,Medtr4g051380,Medtr8g102800,Medtr5g054300,Medtr4g006090,Medtr4g051390,Medtr4g051110,Medtr1g074310,Medtr4g051103,Medtr4g051410,Medtr4g034810,",0.151201606
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,

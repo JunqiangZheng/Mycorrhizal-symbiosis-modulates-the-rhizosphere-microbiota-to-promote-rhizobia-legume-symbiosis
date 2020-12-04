@@ -1,0 +1,9 @@
+"","Row.names","name","betweenness","closeness","degree","Phylum_color","Order_color","Name","Domain","Phylum","Class","Order","Family","Genus","Size"
+"5","OTU102","OTU102",747.125,0.00256399080040101,45,"#FF8000FF","Others","Chitinophagaceae","Bacteria","Bacteroidetes","Sphingobacteriia","Sphingobacteriales","Chitinophagaceae","Chitinophaga",55303
+"38","OTU137","OTU137",940.75,0.00253052445119251,37,"orangered","Others","Asticcacaulis","Bacteria","Alphaproteobacteria","Caulobacterales","Caulobacterales","Caulobacteraceae","Asticcacaulis",40326
+"194","OTU45","OTU45",944.75,0.00272174757968596,46,"#00FFFFFF","Actinomycetales","Streptomyces","Bacteria","Actinobacteria","Actinobacteridae","Actinomycetales","Streptomycetaceae","Streptomyces",33251
+"211","OTU50","OTU50",564,0.00264030585303001,62,"deepskyblue","Others","Acidobacteria_Gp4","Bacteria","Acidobacteria","Acidobacteria_Gp4","","","Blastocatella",175281
+"223","OTU54","OTU54",774,0.00269585377689114,44,"orangered","Others","Caulobacter","Bacteria","Alphaproteobacteria","Caulobacterales","Caulobacterales","Caulobacteraceae","Caulobacter",86524
+"251","OTU66","OTU66",499,0.00256381988652533,51,"#FF0080FF","Others","Nitrososphaera","Archaea","Thaumarchaeota","","Nitrososphaerales","Nitrososphaeraceae","Nitrososphaera",114630
+"268","OTU74","OTU74",1074.5,0.00277096582013661,54,"#FFFF00FF","Burkholderiales","Comamonadaceae","Bacteria","Betaproteobacteria","Burkholderiales","Burkholderiales","Comamonadaceae","Ramlibacter",68394
+"304","OTU97","OTU97",501,0.00260304816940637,63,"#80FF00FF","Others","Opitutus","Bacteria","Verrucomicrobia","Opitutae","Opitutales","Opitutaceae","Opitutus",104086

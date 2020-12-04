@@ -1,0 +1,17 @@
+"","Row.names","name","betweenness","closeness","degree","Phylum_color","Order_color","Name","Domain","Phylum","Class","Order","Family","Genus","Size"
+"2","OTU101","OTU101",1220.85,0.00445269677580227,59,"orangered","Sphingomonadales","Sphingomonas","Bacteria","Alphaproteobacteria","Sphingomonadales","Sphingomonadales","Sphingomonadaceae","Sphingomonas",9211
+"8","OTU107","OTU107",306.25,0.00404331195769079,44,"#0080FFFF","Xanthomonadales","Dokdonella","Bacteria","Gammaproteobacteria","Xanthomonadales","Xanthomonadales","Xanthomonadaceae","Dokdonella",34752
+"48","OTU16","OTU16",331.666666666667,0.0041125354192113,62,"orangered","Rhizobiales","Mesorhizobium","Bacteria","Alphaproteobacteria","Rhizobiales","Rhizobiales","Phyllobacteriaceae","Mesorhizobium",63817
+"59","OTU18","OTU18",285.25,0.00412497009396682,71,"orangered","Rhizobiales","Bradyrhizobium","Bacteria","Alphaproteobacteria","Rhizobiales","Rhizobiales","Bradyrhizobiaceae","Bradyrhizobium",123646
+"62","OTU185","OTU185",809,0.00399333911036391,38,"#0080FFFF","Others","Cellvibrio","Bacteria","Gammaproteobacteria","Pseudomonadales","Pseudomonadales","Pseudomonadaceae","Cellvibrio",7943
+"69","OTU199","OTU199",948.825,0.00442237189494213,56,"#FF0080FF","Others","Saccharibacteria_genera_incertae_sedis","Bacteria","Candidatus Saccharibacteria","","","","Saccharibacteria_genera_incertae_sedis",29150
+"71","OTU20","OTU20",367.75,0.00398779734013918,42,"#00FFFFFF","Actinomycetales","Actinoplanes","Bacteria","Actinobacteria","Actinobacteridae","Actinomycetales","Micromonosporaceae","Actinoplanes",103447
+"105","OTU27","OTU27",512.25,0.0041873592000469,54,"#00FFFFFF","Actinomycetales","Pseudonocardiaceae","Bacteria","Actinobacteria","Actinobacteridae","Actinomycetales","Pseudonocardiaceae","Lentzea",103954
+"134","OTU356","OTU356",395,0.00423280423280423,55,"#FF8000FF","Others","Niastella","Bacteria","Bacteroidetes","Sphingobacteriia","Sphingobacteriales","Chitinophagaceae","Niastella",7404
+"154","OTU41","OTU41",327.7,0.00394000165480069,39,"#0080FFFF","Xanthomonadales","Lysobacter","Bacteria","Gammaproteobacteria","Xanthomonadales","Xanthomonadales","Xanthomonadaceae","Lysobacter",62059
+"166","OTU44","OTU44",653.5,0.00429819132109208,61,"orangered","Rhizobiales","Bradyrhizobium","Bacteria","Alphaproteobacteria","Rhizobiales","Rhizobiales","Bradyrhizobiaceae","Bradyrhizobium",70908
+"178","OTU48","OTU48",930.5,0.00405827685564709,39,"orangered","Rhizobiales","Devosia","Bacteria","Alphaproteobacteria","Rhizobiales","Rhizobiales","Hyphomicrobiaceae","Devosia",16489
+"185","OTU51","OTU51",285.5,0.00408638620436018,53,"orangered","Rhizobiales","Labrys","Bacteria","Alphaproteobacteria","Rhizobiales","Rhizobiales","Xanthobacteraceae","Labrys",40988
+"198","OTU58","OTU58",665.575,0.0041796759079301,43,"orangered","Sphingomonadales","Sphingomonas","Bacteria","Alphaproteobacteria","Sphingomonadales","Sphingomonadales","Sphingomonadaceae","Sphingomonas",8950
+"241","OTU82","OTU82",800.333333333333,0.00408181591826572,42,"#0080FFFF","Xanthomonadales","Xanthomonadaceae","Bacteria","Gammaproteobacteria","Xanthomonadales","Xanthomonadales","Xanthomonadaceae","Thermomonas",15464
+"262","OTU97","OTU97",701.5,0.00417414534374087,52,"#80FF00FF","Others","Opitutus","Bacteria","Verrucomicrobia","Opitutae","Opitutales","Opitutaceae","Opitutus",11386

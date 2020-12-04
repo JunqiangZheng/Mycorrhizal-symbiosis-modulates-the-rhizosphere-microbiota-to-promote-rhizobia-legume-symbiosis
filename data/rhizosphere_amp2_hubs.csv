@@ -1,0 +1,7 @@
+"","Row.names","name","betweenness","closeness","degree","Phylum_color","Order_color","Name","Domain","Phylum","Class","Order","Family","Genus","Size"
+"83","OTU2","OTU2",499.416666666667,0.00370373113874918,77,"orangered","Rhizobiales","Rhizobium","Bacteria","Alphaproteobacteria","Rhizobiales","Rhizobiales","Rhizobiaceae","Rhizobium",587299
+"150","OTU35","OTU35",369,0.00355763004916645,55,"deepskyblue","Others","Aridibacter","Bacteria","Acidobacteria","Acidobacteria_Gp4","","","Aridibacter",306373
+"222","OTU57","OTU57",600.232142857143,0.00371054760261519,66,"orangered","Rhizobiales","Bosea","Bacteria","Alphaproteobacteria","Rhizobiales","Rhizobiales","Bradyrhizobiaceae","Bosea",192447
+"254","OTU73","OTU73",468.75,0.00388578889286103,71,"orangered","Sphingomonadales","Sphingomonas","Bacteria","Alphaproteobacteria","Sphingomonadales","Sphingomonadales","Sphingomonadaceae","Sphingomonas",141834
+"267","OTU83","OTU83",591.5,0.00368458480256152,57,"orangered","Sphingomonadales","Sphingomonas","Bacteria","Alphaproteobacteria","Sphingomonadales","Sphingomonadales","Sphingomonadaceae","Sphingomonas",115581
+"287","OTU97","OTU97",389.5,0.00369729505893488,72,"#80FF00FF","Others","Opitutus","Bacteria","Verrucomicrobia","Opitutae","Opitutales","Opitutaceae","Opitutus",167353

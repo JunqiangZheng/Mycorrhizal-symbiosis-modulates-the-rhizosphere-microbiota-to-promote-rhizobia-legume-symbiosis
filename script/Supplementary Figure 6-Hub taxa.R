@@ -1,0 +1,443 @@
+
+###HUB taxa 与转录组数据相关性
+setwd("F:\\#R\\AMF\\Miseq\\Medicago\\R_code_for_github")
+
+library(devtools)
+install_github("kassambara/easyGgplot2")
+library(ggplot2)
+library(easyGgplot2)
+
+###（1）根际节点三属性划定hubs
+
+bact_igraph_rhizosphere_amp2_nodes.topo <- read.csv(file="bact_igraph_rhizosphere_amp2_nodes.topo.csv", row.names = 1)
+bact_igraph_rhizosphere_amp2_nodes.tax <- read.csv(file="bact_rhizosphere_amp2_nodes.csv", row.names = 1)
+rhizosphere_amp2_nodes.stat <- merge.data.frame(bact_igraph_rhizosphere_amp2_nodes.topo, bact_igraph_rhizosphere_amp2_nodes.tax, by="row.names")
+
+bact_igraph_rhizosphere_amn_nodes.topo <- read.csv(file="bact_igraph_rhizosphere_amn_nodes.topo.csv", row.names = 1)
+bact_igraph_rhizosphere_amn_nodes.tax <- read.csv(file="bact_rhizosphere_amn_nodes.csv", row.names = 1)
+rhizosphere_amn_nodes.stat <- merge.data.frame(bact_igraph_rhizosphere_amn_nodes.topo, bact_igraph_rhizosphere_amn_nodes.tax, by="row.names")
+
+bact_igraph_root_amp2_nodes.topo <- read.csv(file="bact_igraph_root_amp2_nodes.topo.csv", row.names = 1)
+bact_igraph_root_amp2_nodes.tax <- read.csv(file="bact_root_amp2_nodes.csv", row.names = 1)
+root_amp2_nodes.stat <- merge.data.frame(bact_igraph_root_amp2_nodes.topo, bact_igraph_root_amp2_nodes.tax, by="row.names")
+
+bact_igraph_root_amn_nodes.topo <- read.csv(file="bact_igraph_root_amn_nodes.topo.csv", row.names = 1)
+bact_igraph_root_amn_nodes.tax <- read.csv(file="bact_root_amn_nodes.csv", row.names = 1)
+root_amn_nodes.stat <- merge.data.frame(bact_igraph_root_amn_nodes.topo, bact_igraph_root_amn_nodes.tax, by="row.names")
+
+
+
+####rhizosphere_amp2
+#异常值处理 
+#盖帽法：整行替换数据框里99%以上和1%以下的点，将99%以上的点值=99%的点值；小于1%的点值=1%的点值
+
+rhizosphere_amp2_nodes.q20 <- quantile(log(bact_igraph_rhizosphere_amp2_nodes.topo$betweenness), 0.2) 
+#取得时1%时的变量值 
+rhizosphere_amp2_nodes.q80 <- quantile(log(bact_igraph_rhizosphere_amp2_nodes.topo$betweenness), 0.8) 
+#取得时99%时的变量值 
+exp(rhizosphere_amp2_nodes.q20)
+exp(rhizosphere_amp2_nodes.q80) 
+summary(bact_igraph_rhizosphere_amp2_nodes.topo$betweenness) 
+#盖帽法之后，查看数据情况
+
+
+rhizosphere_amp2_nodes.q20 <- quantile(log(bact_igraph_rhizosphere_amp2_nodes.topo$degree), 0.2) 
+#取得时1%时的变量值 
+rhizosphere_amp2_nodes.q80 <- quantile(log(bact_igraph_rhizosphere_amp2_nodes.topo$degree), 0.8) 
+#取得时99%时的变量值 
+exp(rhizosphere_amp2_nodes.q20)
+exp(rhizosphere_amp2_nodes.q80) 
+summary(bact_igraph_rhizosphere_amp2_nodes.topo$degree) 
+#盖帽法之后，查看数据情况
+
+rhizosphere_amp2_nodes.q20 <- quantile(log(bact_igraph_rhizosphere_amp2_nodes.topo$closeness), 0.2) 
+#取得时1%时的变量值 
+rhizosphere_amp2_nodes.q80 <- quantile(log(bact_igraph_rhizosphere_amp2_nodes.topo$closeness), 0.8) 
+#取得时99%时的变量值 
+exp(rhizosphere_amp2_nodes.q20)
+exp(rhizosphere_amp2_nodes.q80) 
+summary(bact_igraph_rhizosphere_amp2_nodes.topo$closeness) 
+#盖帽法之后，查看数据情况
+
+
+```
+在日常的工作中，总有一些报表、图表的配色方案是值得我们参考的，但是因为没有颜色抓取工具导致大家没办法把配色给取下来。下面介绍一下大家平时可以怎么抓取颜色，快速获取颜色的RGB或十六进制代码：
+
+平时大家都会登录QQ或微信，可以利用截图功能，抓取颜色：
+
+① 同时按住 Ctrl + Alt + A，进入截图；
+
+② 按住 Ctrl 键，光标处会显示光标位置对应RGB的6位十六进制颜色码；（如：C0EAF7）
+
+③ 松开 Ctrl 键，光标处会显示光标位置对应RGB的3串RGB颜色值。（如：192,234,247）
+
+用好上面的取色技巧，可以大大加快项目组的开发速度和配色技能。
+————————————————
+版权声明：本文为CSDN博主「丿潇湘丶书笛」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/wang1qqqq/article/details/95733804
+
+```
+##Rhizobiales #0072B2; Sphingomonadales #E69F00; Actinomycetales #56B4E9; Xanthomonadales #009E73
+##Burkholderiales #D55E00; Others #F0E442
+
+rhizosphere_amp2_nodes.stat$Order_color <- factor(rhizosphere_amp2_nodes.stat$Order_color, 
+                                                  levels = c("Rhizobiales","Sphingomonadales","Actinomycetales","Xanthomonadales","Burkholderiales","Others"))
+
+rhizosphere_amp2_hubs <- rhizosphere_amp2_nodes.stat[rhizosphere_amp2_nodes.stat$betweenness > 316.695 & 
+                                                       rhizosphere_amp2_nodes.stat$degree > 54.19 & 
+                                                        rhizosphere_amp2_nodes.stat$closeness > 0.00352172,]
+write.csv(rhizosphere_amp2_hubs, file = "rhizosphere_amp2_hubs.csv")
+rhizosphere_amp2_nodes.stat$label <- ifelse(rhizosphere_amp2_nodes.stat$Row.names %in% rhizosphere_amp2_hubs$Row.names, rhizosphere_amp2_nodes.stat$Row.names, "")
+rhizosphere_amp2_nodes.stat$label <- gsub("OTU","ASV", rhizosphere_amp2_nodes.stat$label)
+
+windows(3.3,2.2)
+betweenness_degree <- ggplot(rhizosphere_amp2_nodes.stat, aes(betweenness, degree, color=Order_color)) +
+  geom_point(cex=2) +
+  geom_vline(xintercept = 316.695, colour='orange', lty=2, , cex=1) +
+  geom_hline(yintercept = 54.19853, colour='orange', lty=2, , cex=1) +
+  #geom_text(aes(x=450,y=60),color="orange",label="p = 0.2", size = 2) +
+  geom_text(aes(betweenness+100, degree), colour='black', label=rhizosphere_amp2_nodes.stat$label, size = 2)+
+  scale_colour_manual(values=c("#0072B2","#E69F00","#56B4E9","#009E73","#D55E00","#F0E442")) +
+  labs(x=paste("Betweenness centrality - Fig. 3A", "\n", "[number of shortest paths going through]"),
+       y=paste("Degree - Fig. 3A", "\n", "[number of correlations]"))  +
+  theme_bw() + 
+  theme(legend.position= "none",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(legend.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(size = 8, colour = "black"),
+        axis.text = element_text(size = 8, colour = "black"))
+
+betweenness_degree
+###
+
+
+windows(3.3,2.5)
+closeness_degree <- ggplot(rhizosphere_amp2_nodes.stat, aes(closeness, degree, color=Order_color)) +
+  geom_point(cex=2) +
+  xlim(0.0025,0.00425) +
+  geom_vline(xintercept = 0.00352172, colour='orange', lty=2, cex=1) +
+  geom_hline(yintercept = 54.19853, colour='orange', lty=2, cex=1) +
+  #geom_text(aes(x=0.004,y=60),color="orange",label="p = 0.2", size = 2) +
+  geom_text(aes(closeness+0.00012, degree), colour='black', label=rhizosphere_amp2_nodes.stat$label, size = 2)+
+  scale_colour_manual(values=c("#0072B2","#E69F00","#56B4E9","#009E73","#D55E00","#F0E442")) +
+  labs(x=paste("Closeness centrality - Fig. 3A", "\n", "[1/(distance to all other nodes)]"),
+       y=paste("Degree - Fig. 3A", "\n", "[number of correlations]"))  +
+  theme_bw() + 
+  theme(legend.position= "none",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(legend.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(size = 8, colour = "black"),
+        axis.text = element_text(size = 8, colour = "black"))
+
+closeness_degree
+
+
+##############
+windows(6.5,2.5)
+par(mfrow=c(1,2))
+ggplot2.multiplot(betweenness_degree,closeness_degree)
+
+
+
+####rhizosphere_amn
+#异常值处理 
+#盖帽法：整行替换数据框里99%以上和1%以下的点，将99%以上的点值=99%的点值；小于1%的点值=1%的点值
+
+rhizosphere_amn_nodes.q20 <- quantile(log(bact_igraph_rhizosphere_amn_nodes.topo$betweenness), 0.2) 
+#取得时1%时的变量值 
+rhizosphere_amn_nodes.q80 <- quantile(log(bact_igraph_rhizosphere_amn_nodes.topo$betweenness), 0.8) 
+#取得时99%时的变量值 
+exp(rhizosphere_amn_nodes.q20)
+exp(rhizosphere_amn_nodes.q80) 
+summary(bact_igraph_rhizosphere_amn_nodes.topo$betweenness) 
+#盖帽法之后，查看数据情况
+
+
+rhizosphere_amn_nodes.q20 <- quantile(log(bact_igraph_rhizosphere_amn_nodes.topo$degree), 0.2) 
+#取得时1%时的变量值 
+rhizosphere_amn_nodes.q80 <- quantile(log(bact_igraph_rhizosphere_amn_nodes.topo$degree), 0.8) 
+#取得时99%时的变量值 
+exp(rhizosphere_amn_nodes.q20)
+exp(rhizosphere_amn_nodes.q80) 
+summary(bact_igraph_rhizosphere_amn_nodes.topo$degree) 
+#盖帽法之后，查看数据情况
+
+rhizosphere_amn_nodes.q20 <- quantile(log(bact_igraph_rhizosphere_amn_nodes.topo$closeness), 0.2) 
+#取得时1%时的变量值 
+rhizosphere_amn_nodes.q80 <- quantile(log(bact_igraph_rhizosphere_amn_nodes.topo$closeness), 0.8) 
+#取得时99%时的变量值 
+exp(rhizosphere_amn_nodes.q20)
+exp(rhizosphere_amn_nodes.q80) 
+summary(bact_igraph_rhizosphere_amn_nodes.topo$closeness) 
+#盖帽法之后，查看数据情况
+
+
+rhizosphere_amn_nodes.stat$Order_color <- factor(rhizosphere_amn_nodes.stat$Order_color, 
+                                                 levels = c("Rhizobiales","Sphingomonadales","Actinomycetales","Xanthomonadales","Burkholderiales","Others"))
+
+rhizosphere_amn_hubs <- rhizosphere_amn_nodes.stat[rhizosphere_amn_nodes.stat$betweenness > 440.81 & 
+                                                       rhizosphere_amn_nodes.stat$degree > 35.78669 & 
+                                                       rhizosphere_amn_nodes.stat$closeness > 0.002521201,]
+write.csv(rhizosphere_amn_hubs, file = "rhizosphere_amn_hubs.csv")
+rhizosphere_amn_nodes.stat$label <- ifelse(rhizosphere_amn_nodes.stat$Row.names %in% rhizosphere_amn_hubs$Row.names, rhizosphere_amn_nodes.stat$Row.names, "")
+rhizosphere_amn_nodes.stat$label <- gsub("OTU", "ASV", rhizosphere_amn_nodes.stat$label)
+
+windows(3.3,2.5)
+betweenness_degree <- ggplot(rhizosphere_amn_nodes.stat, aes(betweenness, degree, color=Order_color)) +
+  geom_point(cex=2) +
+  geom_vline(xintercept = 440.81, colour='orange', lty=2, , cex=1) +
+  geom_hline(yintercept = 35.78669, colour='orange', lty=2, , cex=1) +
+  #geom_text(aes(x=520,y=40),color="orange",label="p = 0.2", size = 2) +
+  geom_text(aes(betweenness+120, degree), colour='black', label=rhizosphere_amn_nodes.stat$label, size = 2)+
+  scale_colour_manual(values=c("#0072B2","#E69F00","#56B4E9","#009E73","#D55E00","#F0E442")) +
+  labs(x=paste("Betweenness centrality - Fig. 3B", "\n", "[number of shortest paths going through]"),
+       y=paste("Degree - Fig. 3B", "\n", "[number of correlations]"))  +
+  theme_bw() + 
+  theme(legend.position= "none",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(legend.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(size = 8, colour = "black"),
+        axis.text = element_text(size = 8, colour = "black"))
+
+betweenness_degree
+###
+
+
+windows(3.3,2.5)
+closeness_degree <- ggplot(rhizosphere_amn_nodes.stat, aes(closeness, degree, color=Order_color)) +
+  geom_point(cex=2) +
+  xlim(0.0015,0.0030) +
+  geom_vline(xintercept = 0.002521201, colour='orange', lty=2, cex=1) +
+  geom_hline(yintercept = 35.78669, colour='orange', lty=2, cex=1) +
+  #geom_text(aes(x=0.0027,y=40),color="orange",label="p = 0.2", size = 2) +
+  geom_text(aes(closeness+0.00012, degree), colour='black', label=rhizosphere_amn_nodes.stat$label, size = 2)+
+  scale_colour_manual(values=c("#0072B2","#E69F00","#56B4E9","#009E73","#D55E00","#F0E442")) +
+  labs(x=paste("Closeness centrality - Fig. 3B", "\n", "[1/(distance to all other nodes)]"),
+       y=paste("Degree - Fig. 3B", "\n", "[number of correlations]"))  +
+  theme_bw() + 
+  theme(legend.position= "none",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(legend.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(size = 8, colour = "black"),
+        axis.text = element_text(size = 8, colour = "black"))
+
+closeness_degree
+
+
+##############
+windows(6.5,2.5)
+par(mfrow=c(1,2))
+ggplot2.multiplot(betweenness_degree,closeness_degree)
+
+
+
+
+####root_amp2
+#异常值处理 
+#盖帽法：整行替换数据框里99%以上和1%以下的点，将99%以上的点值=99%的点值；小于1%的点值=1%的点值
+
+root_amp2_nodes.q20 <- quantile(log(bact_igraph_root_amp2_nodes.topo$betweenness), 0.2) 
+#取得时1%时的变量值 
+root_amp2_nodes.q80 <- quantile(log(bact_igraph_root_amp2_nodes.topo$betweenness), 0.8) 
+#取得时99%时的变量值 
+exp(root_amp2_nodes.q20)
+exp(root_amp2_nodes.q80) 
+summary(bact_igraph_root_amp2_nodes.topo$betweenness) 
+#盖帽法之后，查看数据情况
+
+
+root_amp2_nodes.q20 <- quantile(log(bact_igraph_root_amp2_nodes.topo$degree), 0.2) 
+#取得时1%时的变量值 
+root_amp2_nodes.q80 <- quantile(log(bact_igraph_root_amp2_nodes.topo$degree), 0.8) 
+#取得时99%时的变量值 
+exp(root_amp2_nodes.q20)
+exp(root_amp2_nodes.q80) 
+summary(bact_igraph_root_amp2_nodes.topo$degree) 
+#盖帽法之后，查看数据情况
+
+root_amp2_nodes.q20 <- quantile(log(bact_igraph_root_amp2_nodes.topo$closeness), 0.2) 
+#取得时1%时的变量值 
+root_amp2_nodes.q80 <- quantile(log(bact_igraph_root_amp2_nodes.topo$closeness), 0.8) 
+#取得时99%时的变量值 
+exp(root_amp2_nodes.q20)
+exp(root_amp2_nodes.q80) 
+summary(bact_igraph_root_amp2_nodes.topo$closeness) 
+#盖帽法之后，查看数据情况
+
+
+root_amp2_nodes.stat$Order_color <- factor(root_amp2_nodes.stat$Order_color, 
+                                           levels = c("Rhizobiales","Sphingomonadales","Actinomycetales","Xanthomonadales","Burkholderiales","Others"))
+
+root_amp2_hubs <- root_amp2_nodes.stat[root_amp2_nodes.stat$betweenness > 284.4993 & 
+                                                root_amp2_nodes.stat$degree > 37 & 
+                                                root_amp2_nodes.stat$closeness > 0.003899659,]
+write.csv(root_amp2_hubs, file = "root_amp2_hubs.csv")
+root_amp2_nodes.stat$label <- ifelse(root_amp2_nodes.stat$Row.names %in% root_amp2_hubs$Row.names, root_amp2_nodes.stat$Row.names, "")
+root_amp2_nodes.stat$label <- gsub("OTU", "ASV", root_amp2_nodes.stat$label)
+
+windows(3.3,2.5)
+betweenness_degree <- ggplot(root_amp2_nodes.stat, aes(betweenness, degree, color=Order_color)) +
+  geom_point(cex=2) +
+  geom_vline(xintercept = 284.4993, colour='orange', lty=2, , cex=1) +
+  geom_hline(yintercept = 37, colour='orange', lty=2, , cex=1) +
+  #geom_text(aes(x=400,y=40),color="orange",label="p = 0.2", size = 2) +
+  geom_text(aes(betweenness+120, degree), colour='black', label=root_amp2_nodes.stat$label, size = 2)+
+  scale_colour_manual(values=c("#0072B2","#E69F00","#56B4E9","#009E73","#D55E00","#F0E442")) +
+  labs(x=paste("Betweenness centrality - Fig. 3D", "\n", "[number of shortest paths going through]"),
+       y=paste("Degree - Fig. 3D", "\n", "[number of correlations]"))  +
+  theme_bw() + 
+  theme(legend.position= "none",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(legend.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(size = 8, colour = "black"),
+        axis.text = element_text(size = 8, colour = "black"))
+
+betweenness_degree
+###
+
+
+windows(3.3,2.5)
+closeness_degree <- ggplot(root_amp2_nodes.stat, aes(closeness, degree, color=Order_color)) +
+  geom_point(cex=2) +
+  xlim(0.0025,0.0048) +
+  geom_vline(xintercept = 0.003899659, colour='orange', lty=2, cex=1) +
+  geom_hline(yintercept = 37, colour='orange', lty=2, cex=1) +
+  #geom_text(aes(x=0.0045,y=40),color="orange",label="p = 0.2", size = 2) +
+  geom_text(aes(closeness+0.0002, degree), colour='black', label=root_amp2_nodes.stat$label, size = 2)+
+  scale_colour_manual(values=c("#0072B2","#E69F00","#56B4E9","#009E73","#D55E00","#F0E442")) +
+  labs(x=paste("Closeness centrality - Fig. 3D", "\n", "[1/(distance to all other nodes)]"),
+       y=paste("Degree - Fig. 3D", "\n", "[number of correlations]"))  +
+  theme_bw() + 
+  theme(legend.position= "none",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(legend.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(size = 8, colour = "black"),
+        axis.text = element_text(size = 8, colour = "black"))
+
+closeness_degree
+
+
+##############
+windows(6.5,2.5)
+par(mfrow=c(1,2))
+ggplot2.multiplot(betweenness_degree,closeness_degree)
+
+
+
+####root_amn
+#异常值处理 
+#盖帽法：整行替换数据框里99%以上和1%以下的点，将99%以上的点值=99%的点值；小于1%的点值=1%的点值
+
+root_amn_nodes.q20 <- quantile(log(bact_igraph_root_amn_nodes.topo$betweenness), 0.2) 
+#取得时1%时的变量值 
+root_amn_nodes.q80 <- quantile(log(bact_igraph_root_amn_nodes.topo$betweenness), 0.8) 
+#取得时99%时的变量值 
+exp(root_amn_nodes.q20)
+exp(root_amn_nodes.q80) 
+summary(bact_igraph_root_amn_nodes.topo$betweenness) 
+#盖帽法之后，查看数据情况
+
+
+root_amn_nodes.q20 <- quantile(log(bact_igraph_root_amn_nodes.topo$degree), 0.2) 
+#取得时1%时的变量值 
+root_amn_nodes.q80 <- quantile(log(bact_igraph_root_amn_nodes.topo$degree), 0.8) 
+#取得时99%时的变量值 
+exp(root_amn_nodes.q20)
+exp(root_amn_nodes.q80) 
+summary(bact_igraph_root_amn_nodes.topo$degree) 
+#盖帽法之后，查看数据情况
+
+root_amn_nodes.q20 <- quantile(log(bact_igraph_root_amn_nodes.topo$closeness), 0.2) 
+#取得时1%时的变量值 
+root_amn_nodes.q80 <- quantile(log(bact_igraph_root_amn_nodes.topo$closeness), 0.8) 
+#取得时99%时的变量值 
+exp(root_amn_nodes.q20)
+exp(root_amn_nodes.q80) 
+summary(bact_igraph_root_amn_nodes.topo$closeness) 
+#盖帽法之后，查看数据情况
+
+
+root_amn_nodes.stat$Order_color <- factor(root_amn_nodes.stat$Order_color, 
+                                          levels = c("Rhizobiales","Sphingomonadales","Actinomycetales","Xanthomonadales","Burkholderiales","Others"))
+
+root_amn_hubs <- root_amn_nodes.stat[root_amn_nodes.stat$betweenness > 431.216 & 
+                                         root_amn_nodes.stat$degree > 46 & 
+                                         root_amn_nodes.stat$closeness > 0.00258285,]
+
+write.csv(root_amn_hubs, file = "root_amn_hubs.csv")
+root_amn_nodes.stat$label <- ifelse(root_amn_nodes.stat$Row.names %in% root_amn_hubs$Row.names, root_amn_nodes.stat$Row.names, "")
+root_amn_nodes.stat$label <- gsub("OTU", "ASV", root_amn_nodes.stat$label)
+
+
+windows(3.3,2.5)
+betweenness_degree <- ggplot(root_amn_nodes.stat, aes(betweenness, degree, color=Order_color)) +
+  geom_point(cex=2) +
+  geom_vline(xintercept = 431.216, colour='orange', lty=2, , cex=1) +
+  geom_hline(yintercept = 46, colour='orange', lty=2, , cex=1) +
+  #geom_text(aes(x=1000,y=50),color="orange",label="p = 0.2", size = 2) +
+  geom_text(aes(betweenness+150, degree), colour='black', label=root_amn_nodes.stat$label, size = 2)+
+  scale_colour_manual(values=c("#0072B2","#E69F00","#56B4E9","#009E73","#D55E00","#F0E442")) +
+  labs(x=paste("Betweenness centrality - Fig. 3E", "\n", "[number of shortest paths going through]"),
+       y=paste("Degree - Fig. 3E", "\n", "[number of correlations]"))  +
+  theme_bw() + 
+  theme(legend.position= "none",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(legend.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(size = 8, colour = "black"),
+        axis.text = element_text(size = 8, colour = "black"))
+
+betweenness_degree
+###
+
+
+windows(3.3,2.5)
+closeness_degree <- ggplot(root_amn_nodes.stat, aes(closeness, degree, color=Order_color)) +
+  geom_point(cex=2) +
+  xlim(0.0015,0.0032) +
+  geom_vline(xintercept = 0.00258285, colour='orange', lty=2, cex=1) +
+  geom_hline(yintercept = 46, colour='orange', lty=2, cex=1) +
+  #geom_text(aes(x=0.003,y=50),color="orange",label="p = 0.2", size = 2) +
+  geom_text(aes(closeness+0.00015, degree), colour='black', label=root_amn_nodes.stat$label, size = 2)+
+  scale_colour_manual(values=c("#0072B2","#E69F00","#56B4E9","#009E73","#D55E00","#F0E442")) +
+  labs(x=paste("Closeness centrality - Fig. 3E", "\n", "[1/(distance to all other nodes)]"),
+       y=paste("Degree - Fig. 3E", "\n", "[number of correlations]"))  +
+  theme_bw() + 
+  theme(legend.position= "none",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(legend.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(size = 8, colour = "black"),
+        axis.text = element_text(size = 8, colour = "black"))
+
+closeness_degree
+
+
+##############
+windows(6.5,2.5)
+par(mfrow=c(1,2))
+ggplot2.multiplot(betweenness_degree,closeness_degree)
+
+

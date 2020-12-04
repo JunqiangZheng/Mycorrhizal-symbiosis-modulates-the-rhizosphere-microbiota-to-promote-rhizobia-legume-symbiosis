@@ -1,0 +1,1023 @@
+
+####16S数据cap分析
+setwd("F:\\#R\\AMF\\Miseq\\Medicago\\R_code_for_github")
+
+metadata <- read.csv(file = "16S_metadata.csv", header = T, row.names = 1)
+
+###load the feature tables
+feature_table <- read.csv(file = "feature_table.csv", header = T)
+feature_table_cope_adjusted <- read.csv(file = "feature_table_cope_adjusted.csv", header = T, row.names = 1)
+feature_table_quant <- read.csv(file = "feature_table_quant.csv", header = T, row.names = 1)
+feature_table_quant_cope_adjusted <- read.csv(file = "feature_table_quant_cope_adjusted.csv", header = T, row.names = 1)
+
+
+row.names(feature_table) <- feature_table$OTU_ID
+row.names(feature_table_cope_adjusted) <- feature_table_cope_adjusted$OTU_ID
+row.names(feature_table_quant) <- feature_table_quant$OTU_ID
+row.names(feature_table_quant_cope_adjusted) <- feature_table_quant_cope_adjusted$OTU_ID
+
+######################alpha diversity
+#richness
+
+######################beta diversity
+##########################################################
+library(ggplot2)
+library(vegan)
+library(ggbiplot)
+
+
+####use feature table
+count_matrix <- as.data.frame(t(feature_table[,4:78]))
+match(row.names(count_matrix), row.names(metadata))
+
+###(1)阈值选0.5%
+###We applied a previously used relative
+###abundances threshold 0.5% to focus
+###our analysis on PCR-reproducible OTUs
+
+###(2) 选择标准化的OTU数据;log_transform函数已经对数据进行了标准化和阈值划分
+###(先标准化到10000，再去除样本小于最大值小于50的OTU，再取对数)
+
+log_transform <- function(matrix, scale=10000, threshold=50) {
+  
+  transformed <- matrix / rowSums(matrix, na=T) * scale
+  transformed <- transformed[,apply(transformed, 2, max) > threshold]
+  transformed <- log2(transformed + 1)
+  
+  return(transformed)
+  
+}
+
+# apply transformations to OTU count table
+matrix_log_transformed <- log_transform(count_matrix) 
+#write.csv(matrix_log_transformed, file = "CAP分析-feature_table_log_transformed.csv")
+###相对丰度-基于这个文件 
+###为了可比性后面使用同一套进行阈值去除低丰度的OTU-504个OTU
+
+match(row.names(matrix_log_transformed), row.names(metadata))
+
+OTU_list <- names(matrix_log_transformed)
+
+
+
+#########################################################################################
+#########################################################################################
+#########################################################################################
+###########################Figure 2A and 2B & Table S4 
+#############cap分析
+
+feature_table_quant_cope_adjusted_otu <- feature_table_quant_cope_adjusted[feature_table_quant_cope_adjusted$OTU_ID %in% OTU_list,]
+feature_table_quant_cope_adjusted_otu.t <- as.data.frame(t(feature_table_quant_cope_adjusted_otu[,4:78]))
+match(row.names(feature_table_quant_cope_adjusted_otu.t), row.names(metadata))
+
+
+########################################################
+#############rhizosphere_genotype
+metadata_rhizosphere <- subset(metadata, Niche == "Rhizosphere")
+feature_table_quant_cope_adjusted_otu.t_rhizosphere <- feature_table_quant_cope_adjusted_otu.t[row.names(feature_table_quant_cope_adjusted_otu.t) %in% row.names(metadata_rhizosphere),]
+
+#######
+
+capscale.16s_cope_adjusted_quant.rhizosphere <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere ~ Genotype, data = metadata_rhizosphere, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere
+
+
+(R2.16s_cope_adjusted_quant.rhizosphere <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere.anova[1, 4]
+
+wa.16s_cope_adjusted_quant.rhizosphere <- capscale.16s_cope_adjusted_quant.rhizosphere$CCA$wa
+cap.prop.16s_cope_adjusted_quant.rhizosphere <- capscale.16s_cope_adjusted_quant.rhizosphere$CCA$eig/sum(capscale.16s_cope_adjusted_quant.rhizosphere$CCA$eig)
+cap.prop.16s_cope_adjusted_quant.rhizosphere
+
+
+adonis2(feature_table_quant_cope_adjusted_otu.t_rhizosphere ~ Genotype, data = metadata_rhizosphere, permutations = 9999, method = "bray")
+
+
+###用以下代码
+metadata_16s_cope_adjusted_quant.rhizosphere <- cbind(metadata_rhizosphere, wa.16s_cope_adjusted_quant.rhizosphere)
+metadata_16s_cope_adjusted_quant.rhizosphere$Genotype <- factor(metadata_16s_cope_adjusted_quant.rhizosphere$Genotype,levels=c("A17","lyk3","nfp","ipd3","dmi2","dmi3","pt4", "Soil"))
+
+###对色盲友好的调色板
+col_Genotype <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+####Figure 2A
+###cap1,cap2
+
+p = ggplot(metadata_16s_cope_adjusted_quant.rhizosphere, aes(CAP1, CAP2, color=Genotype, shape=MS)) +
+  geom_point(cex=5) +
+  scale_color_manual(values=col_Genotype)  +
+  theme_bw() + 
+  labs(x=paste("Constrained PCoA 1 (", format(100 * cap.prop.16s_cope_adjusted_quant.rhizosphere[1], digits=4), "%)", sep=""),
+       y=paste("Constrained PCoA 2 (", format(100 * cap.prop.16s_cope_adjusted_quant.rhizosphere[2], digits=4), "%)", sep="")) +
+  ggtitle(paste(format(100 * R2.16s_cope_adjusted_quant.rhizosphere, digits=3)," % of variance; p=",format(capscale.16s_cope_adjusted_quant.rhizosphere.p.val,digits=2),sep=""))+
+  theme(legend.position= "right",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(title = element_text(size = 12, colour = "black"),
+        legend.text = element_text(size = 12, colour = "black"),
+        axis.title = element_text(size = 12, colour = "black", face = "bold"),
+        axis.text = element_text(size = 10, colour = "black"))
+
+p = p + stat_ellipse(level=0.68)
+
+windows(4,3)
+p
+
+
+################################pcoa
+
+feature_table_quant_cope_adjusted_otu.t_rhizosphere_bray <- vegdist(feature_table_quant_cope_adjusted_otu.t_rhizosphere, method="bray")
+
+feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa <- cmdscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere_bray, eig = T, add = T)
+
+feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa12 <- scores(feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa)[,1:2]
+feature_table_quant_cope_adjusted_otu.t_rhizosphere_prop <- feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa$eig/sum(feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa$eig)
+
+
+###用以下代码
+metadata_feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa12 <- cbind(metadata_rhizosphere, feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa12)
+metadata_feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa12$Genotype <- factor(metadata_feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa12$Genotype,levels=c("A17","lyk3","nfp","ipd3","dmi2","dmi3","pt4", "Soil"))
+
+####Supplemental Figure 4A
+windows(8,6)
+p = ggplot(metadata_feature_table_quant_cope_adjusted_otu.t_rhizosphere_pcoa12, aes(Dim1, Dim2, color=Genotype, shape=MS)) +
+  geom_point(cex=5) +
+  scale_color_manual(values=col_Genotype)  +
+  theme_bw() + 
+  labs(x=paste("Unconstrained PCoA 1 (", format(100 * feature_table_quant_cope_adjusted_otu.t_rhizosphere_prop[1], digits=4), "%)", sep=""),
+       y=paste("Unconstrained PCoA 2 (", format(100 * feature_table_quant_cope_adjusted_otu.t_rhizosphere_prop[2], digits=4), "%)", sep="")) +
+  ggtitle(paste("PCoA for the microbial load of bacterial cells in rhizosphere"))+
+  theme_bw() + 
+  theme(legend.position= "right",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(title = element_text(size = 12, colour = "black"),
+        legend.text = element_text(size = 12, colour = "black"),
+        axis.title = element_text(size = 12, colour = "black", face = "bold"),
+        axis.text = element_text(size = 10, colour = "black"))
+
+p = p + stat_ellipse(level=0.68)
+p
+
+
+
+#############Table S4 - Quantified bacteria abundance (g-1 ) - Rhizosphere
+####MS matters
+capscale.16s_cope_adjusted_quant.rhizosphere_ms <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere ~ MS, data = metadata_rhizosphere, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere_ms
+
+(R2.16s_cope_adjusted_quant.rhizosphere_ms <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere_ms)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere_ms <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere_ms)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere_ms.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere_ms, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere_ms.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere_ms.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere_ms.p.val
+
+###how about rs
+capscale.16s_cope_adjusted_quant.rhizosphere_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere ~ RS, data = metadata_rhizosphere, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere_rs.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere_rs.p.val
+
+
+##########################################################
+#################WT vs M- (dmi2, dmi3, pt4)
+row.names(feature_table_quant_cope_adjusted_otu.t_rhizosphere)
+feature_table_quant_cope_adjusted_otu.t_rhizosphere1 <- feature_table_quant_cope_adjusted_otu.t_rhizosphere[c(1:15,31:35),]
+metadata_rhizosphere1 <- metadata_rhizosphere[c(1:15,31:35),]
+capscale.16s_cope_adjusted_quant.rhizosphere1_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere1 ~ MS, data = metadata_rhizosphere1, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere1_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere1_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere1_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere1_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere1_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere1_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere1_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere1_rs.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere1_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere1_rs.p.val
+
+
+#################WT vs M+R- (lyk3, nfp, ipd3)
+row.names(feature_table_quant_cope_adjusted_otu.t_rhizosphere)
+feature_table_quant_cope_adjusted_otu.t_rhizosphere2 <- feature_table_quant_cope_adjusted_otu.t_rhizosphere[c(1:5,16:30),]
+metadata_rhizosphere2 <- metadata_rhizosphere[c(1:5,16:30),]
+capscale.16s_cope_adjusted_quant.rhizosphere2_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere2 ~ RS, data = metadata_rhizosphere2, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere2_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere2_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere2_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere2_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere2_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere2_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere2_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere2_rs.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere2_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere2_rs.p.val
+
+#####################################################################
+####only a17&lyk3
+feature_table_quant_cope_adjusted_otu.t_rhizosphere3 <- feature_table_quant_cope_adjusted_otu.t_rhizosphere[c(1:5,21:25),]
+metadata_rhizosphere3 <- metadata_rhizosphere[c(1:5,21:25),]
+capscale.16s_cope_adjusted_quant.rhizosphere3_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere3 ~ Genotype, data = metadata_rhizosphere3, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere3_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere3_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere3_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere3_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere3_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere3_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere3_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere3_rs.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere3_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere3_rs.p.val
+
+
+####only a17&ipd3
+feature_table_quant_cope_adjusted_otu.t_rhizosphere4 <- feature_table_quant_cope_adjusted_otu.t_rhizosphere[c(1:5,16:20),]
+metadata_rhizosphere4 <- metadata_rhizosphere[c(1:5,16:20),]
+capscale.16s_cope_adjusted_quant.rhizosphere4_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere4 ~ Genotype, data = metadata_rhizosphere4, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere4_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere4_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere4_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere4_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere4_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere4_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere4_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere4_rs.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere4_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere4_rs.p.val
+
+
+####only a17&nfp
+feature_table_quant_cope_adjusted_otu.t_rhizosphere5 <- feature_table_quant_cope_adjusted_otu.t_rhizosphere[c(1:5,26:30),]
+metadata_rhizosphere5 <- metadata_rhizosphere[c(1:5,26:30),]
+capscale.16s_cope_adjusted_quant.rhizosphere5_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere5 ~ Genotype, data = metadata_rhizosphere5, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere5_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere5_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere5_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere5_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere5_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere5_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere5_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere5_rs.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere5_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere5_rs.p.val
+
+
+
+####only a17&dmi2
+feature_table_quant_cope_adjusted_otu.t_rhizosphere6 <- feature_table_quant_cope_adjusted_otu.t_rhizosphere[c(1:10),]
+metadata_rhizosphere6 <- metadata_rhizosphere[c(1:10),]
+capscale.16s_cope_adjusted_quant.rhizosphere6_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere6 ~ Genotype, data = metadata_rhizosphere6, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere6_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere6_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere6_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere6_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere6_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere6_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere6_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere6_rs.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere6_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere6_rs.p.val
+
+
+####only a17&dmi3
+feature_table_quant_cope_adjusted_otu.t_rhizosphere7 <- feature_table_quant_cope_adjusted_otu.t_rhizosphere[c(1:5,11:15),]
+metadata_rhizosphere7 <- metadata_rhizosphere[c(1:5,11:15),]
+capscale.16s_cope_adjusted_quant.rhizosphere7_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere7 ~ Genotype, data = metadata_rhizosphere7, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere7_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere7_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere7_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere7_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere7_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere7_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere7_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere7_rs.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere7_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere7_rs.p.val
+
+
+####only a17&pt4
+feature_table_quant_cope_adjusted_otu.t_rhizosphere8 <- feature_table_quant_cope_adjusted_otu.t_rhizosphere[c(1:5,31:35),]
+metadata_rhizosphere8 <- metadata_rhizosphere[c(1:5,31:35),]
+capscale.16s_cope_adjusted_quant.rhizosphere8_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere8 ~ Genotype, data = metadata_rhizosphere8, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere8_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere8_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere8_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere8_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere8_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere8_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere8_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere8_rs.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere8_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere8_rs.p.val
+
+
+##########################
+#######
+anosim(feature_table_quant_cope_adjusted_otu.t_rhizosphere1, metadata_rhizosphere1$MS, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_rhizosphere2, metadata_rhizosphere2$RS, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_rhizosphere3, metadata_rhizosphere3$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_rhizosphere4, metadata_rhizosphere4$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_rhizosphere5, metadata_rhizosphere5$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_rhizosphere6, metadata_rhizosphere6$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_rhizosphere7, metadata_rhizosphere7$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_rhizosphere8, metadata_rhizosphere8$Genotype, distance = "bray", permutations = 9999)
+
+###
+
+######################################################
+###how about rs*ms
+capscale.16s_cope_adjusted_quant.rhizosphere_rs_ms <- capscale(feature_table_quant_cope_adjusted_otu.t_rhizosphere ~ RS*MS + Condition(RS+MS), data = metadata_rhizosphere, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.rhizosphere_rs_ms
+
+(R2.16s_cope_adjusted_quant.rhizosphere_rs_ms <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere_rs_ms)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere_rs_ms <- RsquareAdj(capscale.16s_cope_adjusted_quant.rhizosphere_rs_ms)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.rhizosphere_rs_ms.anova <- anova.cca(capscale.16s_cope_adjusted_quant.rhizosphere_rs_ms, permutations = 10000)
+capscale.16s_cope_adjusted_quant.rhizosphere_rs_ms.p.val <- capscale.16s_cope_adjusted_quant.rhizosphere_rs_ms.anova[1, 4]
+capscale.16s_cope_adjusted_quant.rhizosphere_rs_ms.p.val
+
+
+############################################################################################################
+############################################################################################################
+############################################################################################################
+#############Root_genotype Figure 2B
+metadata_root <- subset(metadata, Niche == "Root")
+feature_table_quant_cope_adjusted_otu.t_root <- feature_table_quant_cope_adjusted_otu.t[row.names(feature_table_quant_cope_adjusted_otu.t) %in% row.names(metadata_root),]
+
+#######
+capscale.16s_cope_adjusted_quant.root <- capscale(feature_table_quant_cope_adjusted_otu.t_root ~ Genotype, data = metadata_root, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root
+
+(R2.16s_cope_adjusted_quant.root <- RsquareAdj(capscale.16s_cope_adjusted_quant.root)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root <- RsquareAdj(capscale.16s_cope_adjusted_quant.root)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root.p.val <- capscale.16s_cope_adjusted_quant.root.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root.p.val
+
+wa.16s_cope_adjusted_quant.root <- capscale.16s_cope_adjusted_quant.root$CCA$wa
+cap.prop.16s_cope_adjusted_quant.root <- capscale.16s_cope_adjusted_quant.root$CCA$eig/sum(capscale.16s_cope_adjusted_quant.root$CCA$eig)
+cap.prop.16s_cope_adjusted_quant.root
+
+adonis2(feature_table_quant_cope_adjusted_otu.t_root ~ Genotype, data = metadata_root, permutations = 9999, method = "bray")
+
+###用以下代码
+metadata_16s_cope_adjusted_quant.root <- cbind(metadata_root, wa.16s_cope_adjusted_quant.root)
+metadata_16s_cope_adjusted_quant.root$Genotype <- factor(metadata_16s_cope_adjusted_quant.root$Genotype,levels=c("A17","lyk3","nfp","ipd3","dmi2","dmi3","pt4", "Soil"))
+
+###Figure 2B
+###cap1,cap2
+p = ggplot(metadata_16s_cope_adjusted_quant.root, aes(CAP1, CAP2, color=Genotype, shape=MS)) +
+  geom_point(cex=5) +
+  scale_color_manual(values=col_Genotype)  +
+  theme_bw() + 
+  labs(x=paste("Constrained PCoA 1 (", format(100 * cap.prop.16s_cope_adjusted_quant.root[1], digits=4), "%)", sep=""),
+       y=paste("Constrained PCoA 2 (", format(100 * cap.prop.16s_cope_adjusted_quant.root[2], digits=4), "%)", sep="")) +
+  ggtitle(paste(format(100 * R2.16s_cope_adjusted_quant.root, digits=3)," % of variance; p=",format(capscale.16s_cope_adjusted_quant.root.p.val,digits=2),sep=""))+
+  theme(legend.position= "right",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(title = element_text(size = 12, colour = "black"),
+        legend.text = element_text(size = 12, colour = "black"),
+        axis.title = element_text(size = 12, colour = "black", face = "bold"),
+        axis.text = element_text(size = 10, colour = "black"))
+
+p = p + stat_ellipse(level=0.68)
+
+windows(4,3)
+p
+
+
+
+##########################################################pcoa
+feature_table_quant_cope_adjusted_otu.t_root_bray <- vegdist(feature_table_quant_cope_adjusted_otu.t_root, method="bray")
+
+feature_table_quant_cope_adjusted_otu.t_root_pcoa <- cmdscale(feature_table_quant_cope_adjusted_otu.t_root_bray, eig = T, add = T)
+
+feature_table_quant_cope_adjusted_otu.t_root_pcoa12 <- scores(feature_table_quant_cope_adjusted_otu.t_root_pcoa)[,1:2]
+feature_table_quant_cope_adjusted_otu.t_root_prop <- feature_table_quant_cope_adjusted_otu.t_root_pcoa$eig/sum(feature_table_quant_cope_adjusted_otu.t_root_pcoa$eig)
+
+
+###用以下代码
+metadata_feature_table_quant_cope_adjusted_otu.t_root_pcoa12 <- cbind(metadata_root, feature_table_quant_cope_adjusted_otu.t_root_pcoa12)
+metadata_feature_table_quant_cope_adjusted_otu.t_root_pcoa12$Genotype <- factor(metadata_feature_table_quant_cope_adjusted_otu.t_root_pcoa12$Genotype,levels=c("A17","lyk3","nfp","ipd3","dmi2","dmi3","pt4", "Soil"))
+
+####Supplemental Figure 4B
+windows(8,6)
+p = ggplot(metadata_feature_table_quant_cope_adjusted_otu.t_root_pcoa12, aes(Dim1, Dim2, color=Genotype, shape=MS)) +
+  geom_point(cex=5) +
+  scale_color_manual(values=col_Genotype)  +
+  labs(x=paste("Unconstrained PCoA 1 (", format(100 * feature_table_quant_cope_adjusted_otu.t_root_prop[1], digits=4), "%)", sep=""),
+       y=paste("Unconstrained PCoA 2 (", format(100 * feature_table_quant_cope_adjusted_otu.t_root_prop[2], digits=4), "%)", sep="")) +
+  ggtitle(paste("PCoA for the microbial load of bacterial cells in root"))+
+  theme_bw() + 
+  theme(legend.position= "right",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(title = element_text(size = 12, colour = "black"),
+        legend.text = element_text(size = 12, colour = "black"),
+        axis.title = element_text(size = 12, colour = "black", face = "bold"),
+        axis.text = element_text(size = 10, colour = "black"))
+
+p = p + stat_ellipse(level=0.68)
+p
+
+
+
+#############Table S4 - Quantified bacteria abundance (g-1 ) - Root
+####MS matters
+capscale.16s_cope_adjusted_quant.root_ms <- capscale(feature_table_quant_cope_adjusted_otu.t_root ~ MS, data = metadata_root, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root_ms
+
+(R2.16s_cope_adjusted_quant.root_ms <- RsquareAdj(capscale.16s_cope_adjusted_quant.root_ms)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root_ms <- RsquareAdj(capscale.16s_cope_adjusted_quant.root_ms)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root_ms.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root_ms, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root_ms.p.val <- capscale.16s_cope_adjusted_quant.root_ms.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root_ms.p.val
+
+###how about rs
+capscale.16s_cope_adjusted_quant.root_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_root ~ RS, data = metadata_root, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root_rs
+
+(R2.16s_cope_adjusted_quant.root_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root_rs.p.val <- capscale.16s_cope_adjusted_quant.root_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root_rs.p.val
+
+###########################################################################
+#################WT vs M- (dmi2, dmi3, pt4)
+row.names(feature_table_quant_cope_adjusted_otu.t_root)
+feature_table_quant_cope_adjusted_otu.t_root1 <- feature_table_quant_cope_adjusted_otu.t_root[c(1:15,31:35),]
+metadata_root1 <- metadata_root[c(1:15,31:35),]
+capscale.16s_cope_adjusted_quant.root1_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_root1 ~ MS, data = metadata_root1, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root1_rs
+
+(R2.16s_cope_adjusted_quant.root1_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root1_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root1_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root1_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root1_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root1_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root1_rs.p.val <- capscale.16s_cope_adjusted_quant.root1_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root1_rs.p.val
+
+
+#################WT vs M+R- (lyk3, nfp, ipd3)
+row.names(feature_table_quant_cope_adjusted_otu.t_root)
+feature_table_quant_cope_adjusted_otu.t_root2 <- feature_table_quant_cope_adjusted_otu.t_root[c(1:5,16:30),]
+metadata_root2 <- metadata_root[c(1:5,16:30),]
+capscale.16s_cope_adjusted_quant.root2_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_root2 ~ RS, data = metadata_root2, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root2_rs
+
+(R2.16s_cope_adjusted_quant.root2_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root2_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root2_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root2_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root2_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root2_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root2_rs.p.val <- capscale.16s_cope_adjusted_quant.root2_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root2_rs.p.val
+
+#####################################################################
+####only a17&lyk3
+feature_table_quant_cope_adjusted_otu.t_root3 <- feature_table_quant_cope_adjusted_otu.t_root[c(1:5,21:25),]
+metadata_root3 <- metadata_root[c(1:5,21:25),]
+capscale.16s_cope_adjusted_quant.root3_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_root3 ~ Genotype, data = metadata_root3, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root3_rs
+
+(R2.16s_cope_adjusted_quant.root3_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root3_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root3_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root3_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root3_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root3_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root3_rs.p.val <- capscale.16s_cope_adjusted_quant.root3_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root3_rs.p.val
+
+
+####only a17&ipd3
+feature_table_quant_cope_adjusted_otu.t_root4 <- feature_table_quant_cope_adjusted_otu.t_root[c(1:5,16:20),]
+metadata_root4 <- metadata_root[c(1:5,16:20),]
+capscale.16s_cope_adjusted_quant.root4_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_root4 ~ Genotype, data = metadata_root4, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root4_rs
+
+(R2.16s_cope_adjusted_quant.root4_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root4_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root4_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root4_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root4_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root4_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root4_rs.p.val <- capscale.16s_cope_adjusted_quant.root4_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root4_rs.p.val
+
+
+####only a17&nfp
+feature_table_quant_cope_adjusted_otu.t_root5 <- feature_table_quant_cope_adjusted_otu.t_root[c(1:5,26:30),]
+metadata_root5 <- metadata_root[c(1:5,26:30),]
+capscale.16s_cope_adjusted_quant.root5_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_root5 ~ Genotype, data = metadata_root5, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root5_rs
+
+(R2.16s_cope_adjusted_quant.root5_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root5_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root5_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root5_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root5_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root5_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root5_rs.p.val <- capscale.16s_cope_adjusted_quant.root5_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root5_rs.p.val
+
+
+
+####only a17&dmi2
+feature_table_quant_cope_adjusted_otu.t_root6 <- feature_table_quant_cope_adjusted_otu.t_root[c(1:10),]
+metadata_root6 <- metadata_root[c(1:10),]
+capscale.16s_cope_adjusted_quant.root6_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_root6 ~ Genotype, data = metadata_root6, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root6_rs
+
+(R2.16s_cope_adjusted_quant.root6_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root6_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root6_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root6_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root6_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root6_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root6_rs.p.val <- capscale.16s_cope_adjusted_quant.root6_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root6_rs.p.val
+
+
+####only a17&dmi3
+feature_table_quant_cope_adjusted_otu.t_root7 <- feature_table_quant_cope_adjusted_otu.t_root[c(1:5,11:15),]
+metadata_root7 <- metadata_root[c(1:5,11:15),]
+capscale.16s_cope_adjusted_quant.root7_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_root7 ~ Genotype, data = metadata_root7, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root7_rs
+
+(R2.16s_cope_adjusted_quant.root7_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root7_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root7_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root7_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root7_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root7_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root7_rs.p.val <- capscale.16s_cope_adjusted_quant.root7_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root7_rs.p.val
+
+
+####only a17&pt4
+feature_table_quant_cope_adjusted_otu.t_root8 <- feature_table_quant_cope_adjusted_otu.t_root[c(1:5,31:35),]
+metadata_root8 <- metadata_root[c(1:5,31:35),]
+capscale.16s_cope_adjusted_quant.root8_rs <- capscale(feature_table_quant_cope_adjusted_otu.t_root8 ~ Genotype, data = metadata_root8, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root8_rs
+
+(R2.16s_cope_adjusted_quant.root8_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root8_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root8_rs <- RsquareAdj(capscale.16s_cope_adjusted_quant.root8_rs)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root8_rs.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root8_rs, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root8_rs.p.val <- capscale.16s_cope_adjusted_quant.root8_rs.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root8_rs.p.val
+
+
+###how about ms*rs
+capscale.16s_cope_adjusted_quant.root_rs_ms <- capscale(feature_table_quant_cope_adjusted_otu.t_root ~ RS*MS + Condition(MS + RS), data = metadata_root, add=F, dist="bray")
+capscale.16s_cope_adjusted_quant.root_rs_ms
+
+(R2.16s_cope_adjusted_quant.root_rs_ms <- RsquareAdj(capscale.16s_cope_adjusted_quant.root_rs_ms)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root_rs_ms <- RsquareAdj(capscale.16s_cope_adjusted_quant.root_rs_ms)$adj.r.squared)
+
+capscale.16s_cope_adjusted_quant.root_rs_ms.anova <- anova.cca(capscale.16s_cope_adjusted_quant.root_rs_ms, permutations = 10000)
+capscale.16s_cope_adjusted_quant.root_rs_ms.p.val <- capscale.16s_cope_adjusted_quant.root_rs_ms.anova[1, 4]
+capscale.16s_cope_adjusted_quant.root_rs_ms.p.val
+
+
+
+#######anosim
+anosim(feature_table_quant_cope_adjusted_otu.t_root1, metadata_root1$MS, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_root2, metadata_root2$RS, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_root3, metadata_root3$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_root4, metadata_root4$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_root5, metadata_root5$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_root6, metadata_root6$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_root7, metadata_root7$Genotype, distance = "bray", permutations = 9999)
+anosim(feature_table_quant_cope_adjusted_otu.t_root8, metadata_root8$Genotype, distance = "bray", permutations = 9999)
+
+
+
+##################################################################################################################
+##################################################################################################################
+##################################################################################################################
+##################################################################################################################
+###cap分析 base on Relative 16S  abundance (%)
+
+#########################################################################################
+###########################Table S4 - Relative 16S  abundance (%)
+#############Root_genotype
+metadata_root <- subset(metadata, Niche == "Root")
+matrix_log_transformed_root <- matrix_log_transformed[row.names(matrix_log_transformed) %in% row.names(metadata_root),]
+
+##########
+
+capscale.16s.root <- capscale(matrix_log_transformed_root ~ Genotype, data = metadata_root, add=F, dist="bray")
+capscale.16s.root
+
+(R2.16s.root <- RsquareAdj(capscale.16s.root)$r.squared)
+(adjR2.16s.root <- RsquareAdj(capscale.16s.root)$adj.r.squared)
+
+capscale.16s.root.anova <- anova.cca(capscale.16s.root, permutations = 10000)
+capscale.16s.root.p.val <- capscale.16s.root.anova[1, 4]
+
+wa.16s.root <- capscale.16s.root$CCA$wa
+cap.prop.16s.root <- capscale.16s.root$CCA$eig/sum(capscale.16s.root$CCA$eig)
+cap.prop.16s.root
+
+
+###用以下代码
+metadata_16s.root <- cbind(metadata_root, wa.16s.root)
+metadata_16s.root$Genotype <- factor(metadata_16s.root$Genotype,levels=c("A17","lyk3","nfp","ipd3","dmi2","dmi3","pt4", "Soil"))
+
+###cap1,cap2
+windows(8,6)
+p = ggplot(metadata_16s.root, aes(CAP1, CAP2, color=Genotype, shape=MS)) +
+  geom_point(cex=5) +
+  theme_bw() + 
+  labs(x=paste("Constrained PCoA 1 (", format(100 * cap.prop.16s.root[1], digits=4), "%)", sep=""),
+       y=paste("Constrained PCoA 2 (", format(100 * cap.prop.16s.root[2], digits=4), "%)", sep="")) +
+  ggtitle(paste(format(100 * R2.16s.root, digits=3)," % of variance; p=",format(capscale.16s.root.p.val,digits=2),sep=""))+
+  theme_bw() + 
+  theme(legend.position= "right",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(title = element_text(size = 12, colour = "black"),
+        legend.text = element_text(size = 12, colour = "black"),
+        axis.title = element_text(size = 12, colour = "black", face = "bold"),
+        axis.text = element_text(size = 10, colour = "black"))
+
+p = p + stat_ellipse(level=0.95)
+p
+
+
+###########################Table S4 - Relative 16S  abundance (%)
+####MS matters
+capscale.16s.root_ms <- capscale(matrix_log_transformed_root ~ MS, data = metadata_root, add=F, dist="bray")
+capscale.16s.root_ms
+
+(R2.16s.root_ms <- RsquareAdj(capscale.16s.root_ms)$r.squared)
+(adjR2.16s.root_ms <- RsquareAdj(capscale.16s.root_ms)$adj.r.squared)
+
+capscale.16s.root_ms.anova <- anova.cca(capscale.16s.root_ms, permutations = 10000)
+capscale.16s.root_ms.p.val <- capscale.16s.root_ms.anova[1, 4]
+capscale.16s.root_ms.p.val
+
+###how about rs
+capscale.16s.root_rs <- capscale(matrix_log_transformed_root ~ RS, data = metadata_root, add=F, dist="bray")
+capscale.16s.root_rs
+
+(R2.16s.root_rs <- RsquareAdj(capscale.16s.root_rs)$r.squared)
+(adjR2.16s.root_rs <- RsquareAdj(capscale.16s.root_rs)$adj.r.squared)
+
+capscale.16s.root_rs.anova <- anova.cca(capscale.16s.root_rs, permutations = 10000)
+capscale.16s.root_rs.p.val <- capscale.16s.root_rs.anova[1, 4]
+capscale.16s.root_rs.p.val
+
+###########################################################################################
+###########################################################################################
+
+#################WT vs M- (dmi2, dmi3, pt4)
+row.names(matrix_log_transformed_root)
+matrix_log_transformed_root1 <- matrix_log_transformed_root[c(1:15,31:35),]
+metadata_root1 <- metadata_root[c(1:15,31:35),]
+capscale.16s.root1_rs <- capscale(matrix_log_transformed_root1 ~ MS, data = metadata_root1, add=F, dist="bray")
+capscale.16s.root1_rs
+
+(R2.16s_cope_adjusted_quant.root1_rs <- RsquareAdj(capscale.16s.root1_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root1_rs <- RsquareAdj(capscale.16s.root1_rs)$adj.r.squared)
+
+capscale.16s.root1_rs.anova <- anova.cca(capscale.16s.root1_rs, permutations = 10000)
+capscale.16s.root1_rs.p.val <- capscale.16s.root1_rs.anova[1, 4]
+capscale.16s.root1_rs.p.val
+
+###########################################################################################
+#################WT vs M+R- (lyk3, nfp, ipd3)
+row.names(matrix_log_transformed_root)
+matrix_log_transformed_root2 <- matrix_log_transformed_root[c(1:5,16:30),]
+metadata_root2 <- metadata_root[c(1:5,16:30),]
+capscale.16s.root2_rs <- capscale(matrix_log_transformed_root2 ~ RS, data = metadata_root2, add=F, dist="bray")
+capscale.16s.root2_rs
+
+(R2.16s_cope_adjusted_quant.root2_rs <- RsquareAdj(capscale.16s.root2_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root2_rs <- RsquareAdj(capscale.16s.root2_rs)$adj.r.squared)
+
+capscale.16s.root2_rs.anova <- anova.cca(capscale.16s.root2_rs, permutations = 10000)
+capscale.16s.root2_rs.p.val <- capscale.16s.root2_rs.anova[1, 4]
+capscale.16s.root2_rs.p.val
+
+#####################################################################
+####only a17&lyk3
+matrix_log_transformed_root3 <- matrix_log_transformed_root[c(1:5,21:25),]
+metadata_root3 <- metadata_root[c(1:5,21:25),]
+capscale.16s.root3_rs <- capscale(matrix_log_transformed_root3 ~ Genotype, data = metadata_root3, add=F, dist="bray")
+capscale.16s.root3_rs
+
+(R2.16s_cope_adjusted_quant.root3_rs <- RsquareAdj(capscale.16s.root3_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root3_rs <- RsquareAdj(capscale.16s.root3_rs)$adj.r.squared)
+
+capscale.16s.root3_rs.anova <- anova.cca(capscale.16s.root3_rs, permutations = 10000)
+capscale.16s.root3_rs.p.val <- capscale.16s.root3_rs.anova[1, 4]
+capscale.16s.root3_rs.p.val
+
+
+####only a17&ipd3
+matrix_log_transformed_root4 <- matrix_log_transformed_root[c(1:5,16:20),]
+metadata_root4 <- metadata_root[c(1:5,16:20),]
+capscale.16s.root4_rs <- capscale(matrix_log_transformed_root4 ~ Genotype, data = metadata_root4, add=F, dist="bray")
+capscale.16s.root4_rs
+
+(R2.16s_cope_adjusted_quant.root4_rs <- RsquareAdj(capscale.16s.root4_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root4_rs <- RsquareAdj(capscale.16s.root4_rs)$adj.r.squared)
+
+capscale.16s.root4_rs.anova <- anova.cca(capscale.16s.root4_rs, permutations = 10000)
+capscale.16s.root4_rs.p.val <- capscale.16s.root4_rs.anova[1, 4]
+capscale.16s.root4_rs.p.val
+
+
+####only a17&nfp
+matrix_log_transformed_root5 <- matrix_log_transformed_root[c(1:5,26:30),]
+metadata_root5 <- metadata_root[c(1:5,26:30),]
+capscale.16s.root5_rs <- capscale(matrix_log_transformed_root5 ~ Genotype, data = metadata_root5, add=F, dist="bray")
+capscale.16s.root5_rs
+
+(R2.16s_cope_adjusted_quant.root5_rs <- RsquareAdj(capscale.16s.root5_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root5_rs <- RsquareAdj(capscale.16s.root5_rs)$adj.r.squared)
+
+capscale.16s.root5_rs.anova <- anova.cca(capscale.16s.root5_rs, permutations = 10000)
+capscale.16s.root5_rs.p.val <- capscale.16s.root5_rs.anova[1, 4]
+capscale.16s.root5_rs.p.val
+
+
+
+####only a17&dmi2
+matrix_log_transformed_root6 <- matrix_log_transformed_root[c(1:10),]
+metadata_root6 <- metadata_root[c(1:10),]
+capscale.16s.root6_rs <- capscale(matrix_log_transformed_root6 ~ Genotype, data = metadata_root6, add=F, dist="bray")
+capscale.16s.root6_rs
+
+(R2.16s_cope_adjusted_quant.root6_rs <- RsquareAdj(capscale.16s.root6_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root6_rs <- RsquareAdj(capscale.16s.root6_rs)$adj.r.squared)
+
+capscale.16s.root6_rs.anova <- anova.cca(capscale.16s.root6_rs, permutations = 10000)
+capscale.16s.root6_rs.p.val <- capscale.16s.root6_rs.anova[1, 4]
+capscale.16s.root6_rs.p.val
+
+
+####only a17&dmi3
+matrix_log_transformed_root7 <- matrix_log_transformed_root[c(1:5,11:15),]
+metadata_root7 <- metadata_root[c(1:5,11:15),]
+capscale.16s.root7_rs <- capscale(matrix_log_transformed_root7 ~ Genotype, data = metadata_root7, add=F, dist="bray")
+capscale.16s.root7_rs
+
+(R2.16s_cope_adjusted_quant.root7_rs <- RsquareAdj(capscale.16s.root7_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root7_rs <- RsquareAdj(capscale.16s.root7_rs)$adj.r.squared)
+
+capscale.16s.root7_rs.anova <- anova.cca(capscale.16s.root7_rs, permutations = 10000)
+capscale.16s.root7_rs.p.val <- capscale.16s.root7_rs.anova[1, 4]
+capscale.16s.root7_rs.p.val
+
+
+####only a17&pt4
+matrix_log_transformed_root8 <- matrix_log_transformed_root[c(1:5,31:35),]
+metadata_root8 <- metadata_root[c(1:5,31:35),]
+capscale.16s.root8_rs <- capscale(matrix_log_transformed_root8 ~ Genotype, data = metadata_root8, add=F, dist="bray")
+capscale.16s.root8_rs
+
+(R2.16s_cope_adjusted_quant.root8_rs <- RsquareAdj(capscale.16s.root8_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.root8_rs <- RsquareAdj(capscale.16s.root8_rs)$adj.r.squared)
+
+capscale.16s.root8_rs.anova <- anova.cca(capscale.16s.root8_rs, permutations = 10000)
+capscale.16s.root8_rs.p.val <- capscale.16s.root8_rs.anova[1, 4]
+capscale.16s.root8_rs.p.val
+
+###how about rs*ms
+capscale.16s.root_rs_ms <- capscale(matrix_log_transformed_root ~ RS*MS + Condition(RS + MS), data = metadata_root, add=F, dist="bray")
+capscale.16s.root_rs_ms
+
+(R2.16s.root_rs_ms <- RsquareAdj(capscale.16s.root_rs_ms)$r.squared)
+(adjR2.16s.root_rs_ms <- RsquareAdj(capscale.16s.root_rs_ms)$adj.r.squared)
+
+capscale.16s.root_rs_ms.anova <- anova.cca(capscale.16s.root_rs_ms, permutations = 10000)
+capscale.16s.root_rs_ms.p.val <- capscale.16s.root_rs_ms.anova[1, 4]
+capscale.16s.root_rs_ms.p.val
+
+
+#######
+anosim(matrix_log_transformed_root1, metadata_root1$MS, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_root2, metadata_root2$RS, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_root3, metadata_root3$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_root4, metadata_root4$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_root5, metadata_root5$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_root6, metadata_root6$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_root7, metadata_root7$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_root8, metadata_root8$Genotype, distance = "bray", permutations = 9999)
+
+
+###########################Table S4 - Relative 16S  abundance (%)
+#############rhizosphere_genotype
+###
+
+metadata_rhizosphere <- subset(metadata, Niche == "Rhizosphere")
+matrix_log_transformed_rhizosphere <- matrix_log_transformed[row.names(matrix_log_transformed) %in% row.names(metadata_rhizosphere),]
+
+#######
+###
+capscale.16s.rhizosphere <- capscale(matrix_log_transformed_rhizosphere ~ Genotype, data = metadata_rhizosphere, add=F, dist="bray")
+capscale.16s.rhizosphere
+
+(R2.16s.rhizosphere <- RsquareAdj(capscale.16s.rhizosphere)$r.squared)
+(adjR2.16s.rhizosphere <- RsquareAdj(capscale.16s.rhizosphere)$adj.r.squared)
+
+capscale.16s.rhizosphere.anova <- anova.cca(capscale.16s.rhizosphere, permutations = 10000)
+capscale.16s.rhizosphere.p.val <- capscale.16s.rhizosphere.anova[1, 4]
+
+wa.16s.rhizosphere <- capscale.16s.rhizosphere$CCA$wa
+cap.prop.16s.rhizosphere <- capscale.16s.rhizosphere$CCA$eig/sum(capscale.16s.rhizosphere$CCA$eig)
+cap.prop.16s.rhizosphere
+
+
+###用以下代码
+metadata_16s.rhizosphere <- cbind(metadata_rhizosphere, wa.16s.rhizosphere)
+metadata_16s.rhizosphere$Genotype <- factor(metadata_16s.rhizosphere$Genotype,levels=c("A17","lyk3","nfp","ipd3","dmi2","dmi3","pt4", "Soil"))
+
+###cap1,cap2
+windows(8,6)
+p = ggplot(metadata_16s.rhizosphere, aes(CAP1, CAP2, color=Genotype, shape=MS)) +
+  geom_point(cex=5) +
+  theme_bw() + 
+  labs(x=paste("Constrained PCoA 1 (", format(100 * cap.prop.16s.rhizosphere[1], digits=4), "%)", sep=""),
+       y=paste("Constrained PCoA 2 (", format(100 * cap.prop.16s.rhizosphere[2], digits=4), "%)", sep="")) +
+  ggtitle(paste(format(100 * R2.16s.rhizosphere, digits=3)," % of variance; p=",format(capscale.16s.rhizosphere.p.val,digits=2),sep=""))+
+  theme_bw() + 
+  theme(legend.position= "right",
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black")) +
+  theme(title = element_text(size = 12, colour = "black"),
+        legend.text = element_text(size = 12, colour = "black"),
+        axis.title = element_text(size = 12, colour = "black", face = "bold"),
+        axis.text = element_text(size = 10, colour = "black"))
+
+p = p + stat_ellipse(level=0.68)
+p
+
+####MS matters
+capscale.16s.rhizosphere_ms <- capscale(matrix_log_transformed_rhizosphere ~ MS, data = metadata_rhizosphere, add=F, dist="bray")
+capscale.16s.rhizosphere_ms
+
+(R2.16s.rhizosphere_ms <- RsquareAdj(capscale.16s.rhizosphere_ms)$r.squared)
+(adjR2.16s.rhizosphere_ms <- RsquareAdj(capscale.16s.rhizosphere_ms)$adj.r.squared)
+
+capscale.16s.rhizosphere_ms.anova <- anova.cca(capscale.16s.rhizosphere_ms, permutations = 10000)
+capscale.16s.rhizosphere_ms.p.val <- capscale.16s.rhizosphere_ms.anova[1, 4]
+capscale.16s.rhizosphere_ms.p.val
+
+###how about rs
+capscale.16s.rhizosphere_rs <- capscale(matrix_log_transformed_rhizosphere ~ RS, data = metadata_rhizosphere, add=F, dist="bray")
+capscale.16s.rhizosphere_rs
+
+(R2.16s.rhizosphere_rs <- RsquareAdj(capscale.16s.rhizosphere_rs)$r.squared)
+(adjR2.16s.rhizosphere_rs <- RsquareAdj(capscale.16s.rhizosphere_rs)$adj.r.squared)
+
+capscale.16s.rhizosphere_rs.anova <- anova.cca(capscale.16s.rhizosphere_rs, permutations = 10000)
+capscale.16s.rhizosphere_rs.p.val <- capscale.16s.rhizosphere_rs.anova[1, 4]
+capscale.16s.rhizosphere_rs.p.val
+
+########################################################################
+#################WT vs M- (dmi2, dmi3, pt4)
+row.names(matrix_log_transformed_rhizosphere)
+matrix_log_transformed_rhizosphere1 <- matrix_log_transformed_rhizosphere[c(1:15,31:35),]
+metadata_rhizosphere1 <- metadata_rhizosphere[c(1:15,31:35),]
+capscale.16s.rhizosphere1_rs <- capscale(matrix_log_transformed_rhizosphere1 ~ MS, data = metadata_rhizosphere1, add=F, dist="bray")
+capscale.16s.rhizosphere1_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere1_rs <- RsquareAdj(capscale.16s.rhizosphere1_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere1_rs <- RsquareAdj(capscale.16s.rhizosphere1_rs)$adj.r.squared)
+
+capscale.16s.rhizosphere1_rs.anova <- anova.cca(capscale.16s.rhizosphere1_rs, permutations = 10000)
+capscale.16s.rhizosphere1_rs.p.val <- capscale.16s.rhizosphere1_rs.anova[1, 4]
+capscale.16s.rhizosphere1_rs.p.val
+
+
+#################WT vs M+R- (lyk3, nfp, ipd3)
+row.names(matrix_log_transformed_rhizosphere)
+matrix_log_transformed_rhizosphere2 <- matrix_log_transformed_rhizosphere[c(1:5,16:30),]
+metadata_rhizosphere2 <- metadata_rhizosphere[c(1:5,16:30),]
+capscale.16s.rhizosphere2_rs <- capscale(matrix_log_transformed_rhizosphere2 ~ RS, data = metadata_rhizosphere2, add=F, dist="bray")
+capscale.16s.rhizosphere2_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere2_rs <- RsquareAdj(capscale.16s.rhizosphere2_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere2_rs <- RsquareAdj(capscale.16s.rhizosphere2_rs)$adj.r.squared)
+
+capscale.16s.rhizosphere2_rs.anova <- anova.cca(capscale.16s.rhizosphere2_rs, permutations = 10000)
+capscale.16s.rhizosphere2_rs.p.val <- capscale.16s.rhizosphere2_rs.anova[1, 4]
+capscale.16s.rhizosphere2_rs.p.val
+
+#####################################################################
+####only a17&lyk3
+matrix_log_transformed_rhizosphere3 <- matrix_log_transformed_rhizosphere[c(1:5,21:25),]
+metadata_rhizosphere3 <- metadata_rhizosphere[c(1:5,21:25),]
+capscale.16s.rhizosphere3_rs <- capscale(matrix_log_transformed_rhizosphere3 ~ Genotype, data = metadata_rhizosphere3, add=F, dist="bray")
+capscale.16s.rhizosphere3_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere3_rs <- RsquareAdj(capscale.16s.rhizosphere3_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere3_rs <- RsquareAdj(capscale.16s.rhizosphere3_rs)$adj.r.squared)
+
+capscale.16s.rhizosphere3_rs.anova <- anova.cca(capscale.16s.rhizosphere3_rs, permutations = 10000)
+capscale.16s.rhizosphere3_rs.p.val <- capscale.16s.rhizosphere3_rs.anova[1, 4]
+capscale.16s.rhizosphere3_rs.p.val
+
+
+####only a17&ipd3
+matrix_log_transformed_rhizosphere4 <- matrix_log_transformed_rhizosphere[c(1:5,16:20),]
+metadata_rhizosphere4 <- metadata_rhizosphere[c(1:5,16:20),]
+capscale.16s.rhizosphere4_rs <- capscale(matrix_log_transformed_rhizosphere4 ~ Genotype, data = metadata_rhizosphere4, add=F, dist="bray")
+capscale.16s.rhizosphere4_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere4_rs <- RsquareAdj(capscale.16s.rhizosphere4_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere4_rs <- RsquareAdj(capscale.16s.rhizosphere4_rs)$adj.r.squared)
+
+capscale.16s.rhizosphere4_rs.anova <- anova.cca(capscale.16s.rhizosphere4_rs, permutations = 10000)
+capscale.16s.rhizosphere4_rs.p.val <- capscale.16s.rhizosphere4_rs.anova[1, 4]
+capscale.16s.rhizosphere4_rs.p.val
+
+
+####only a17&nfp
+matrix_log_transformed_rhizosphere5 <- matrix_log_transformed_rhizosphere[c(1:5,26:30),]
+metadata_rhizosphere5 <- metadata_rhizosphere[c(1:5,26:30),]
+capscale.16s.rhizosphere5_rs <- capscale(matrix_log_transformed_rhizosphere5 ~ Genotype, data = metadata_rhizosphere5, add=F, dist="bray")
+capscale.16s.rhizosphere5_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere5_rs <- RsquareAdj(capscale.16s.rhizosphere5_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere5_rs <- RsquareAdj(capscale.16s.rhizosphere5_rs)$adj.r.squared)
+
+capscale.16s.rhizosphere5_rs.anova <- anova.cca(capscale.16s.rhizosphere5_rs, permutations = 10000)
+capscale.16s.rhizosphere5_rs.p.val <- capscale.16s.rhizosphere5_rs.anova[1, 4]
+capscale.16s.rhizosphere5_rs.p.val
+
+
+
+####only a17&dmi2
+matrix_log_transformed_rhizosphere6 <- matrix_log_transformed_rhizosphere[c(1:10),]
+metadata_rhizosphere6 <- metadata_rhizosphere[c(1:10),]
+capscale.16s.rhizosphere6_rs <- capscale(matrix_log_transformed_rhizosphere6 ~ Genotype, data = metadata_rhizosphere6, add=F, dist="bray")
+capscale.16s.rhizosphere6_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere6_rs <- RsquareAdj(capscale.16s.rhizosphere6_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere6_rs <- RsquareAdj(capscale.16s.rhizosphere6_rs)$adj.r.squared)
+
+capscale.16s.rhizosphere6_rs.anova <- anova.cca(capscale.16s.rhizosphere6_rs, permutations = 10000)
+capscale.16s.rhizosphere6_rs.p.val <- capscale.16s.rhizosphere6_rs.anova[1, 4]
+capscale.16s.rhizosphere6_rs.p.val
+
+
+####only a17&dmi3
+matrix_log_transformed_rhizosphere7 <- matrix_log_transformed_rhizosphere[c(1:5,11:15),]
+metadata_rhizosphere7 <- metadata_rhizosphere[c(1:5,11:15),]
+capscale.16s.rhizosphere7_rs <- capscale(matrix_log_transformed_rhizosphere7 ~ Genotype, data = metadata_rhizosphere7, add=F, dist="bray")
+capscale.16s.rhizosphere7_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere7_rs <- RsquareAdj(capscale.16s.rhizosphere7_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere7_rs <- RsquareAdj(capscale.16s.rhizosphere7_rs)$adj.r.squared)
+
+capscale.16s.rhizosphere7_rs.anova <- anova.cca(capscale.16s.rhizosphere7_rs, permutations = 10000)
+capscale.16s.rhizosphere7_rs.p.val <- capscale.16s.rhizosphere7_rs.anova[1, 4]
+capscale.16s.rhizosphere7_rs.p.val
+
+
+####only a17&pt4
+matrix_log_transformed_rhizosphere8 <- matrix_log_transformed_rhizosphere[c(1:5,31:35),]
+metadata_rhizosphere8 <- metadata_rhizosphere[c(1:5,31:35),]
+capscale.16s.rhizosphere8_rs <- capscale(matrix_log_transformed_rhizosphere8 ~ Genotype, data = metadata_rhizosphere8, add=F, dist="bray")
+capscale.16s.rhizosphere8_rs
+
+(R2.16s_cope_adjusted_quant.rhizosphere8_rs <- RsquareAdj(capscale.16s.rhizosphere8_rs)$r.squared)
+(adjR2.16s_cope_adjusted_quant.rhizosphere8_rs <- RsquareAdj(capscale.16s.rhizosphere8_rs)$adj.r.squared)
+
+capscale.16s.rhizosphere8_rs.anova <- anova.cca(capscale.16s.rhizosphere8_rs, permutations = 10000)
+capscale.16s.rhizosphere8_rs.p.val <- capscale.16s.rhizosphere8_rs.anova[1, 4]
+capscale.16s.rhizosphere8_rs.p.val
+
+
+###how about rs*ms
+capscale.16s.rhizosphere_rs_ms <- capscale(matrix_log_transformed_rhizosphere ~ RS*MS + Condition(RS + MS), data = metadata_rhizosphere, add=F, dist="bray")
+capscale.16s.rhizosphere_rs_ms
+
+(R2.16s.rhizosphere_rs_ms <- RsquareAdj(capscale.16s.rhizosphere_rs_ms)$r.squared)
+(adjR2.16s.rhizosphere_rs_ms <- RsquareAdj(capscale.16s.rhizosphere_rs_ms)$adj.r.squared)
+
+capscale.16s.rhizosphere_rs_ms.anova <- anova.cca(capscale.16s.rhizosphere_rs_ms, permutations = 10000)
+capscale.16s.rhizosphere_rs_ms.p.val <- capscale.16s.rhizosphere_rs_ms.anova[1, 4]
+capscale.16s.rhizosphere_rs_ms.p.val
+
+
+#######
+anosim(matrix_log_transformed_rhizosphere1, metadata_rhizosphere1$MS, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_rhizosphere2, metadata_rhizosphere2$RS, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_rhizosphere3, metadata_rhizosphere3$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_rhizosphere4, metadata_rhizosphere4$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_rhizosphere5, metadata_rhizosphere5$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_rhizosphere6, metadata_rhizosphere6$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_rhizosphere7, metadata_rhizosphere7$Genotype, distance = "bray", permutations = 9999)
+anosim(matrix_log_transformed_rhizosphere8, metadata_rhizosphere8$Genotype, distance = "bray", permutations = 9999)
+
+
+
+
+
+

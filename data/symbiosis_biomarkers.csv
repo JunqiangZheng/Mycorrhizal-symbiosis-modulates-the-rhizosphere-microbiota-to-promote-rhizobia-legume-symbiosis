@@ -1,0 +1,81 @@
+Locus,nsme,Description,Cluster
+Medtr0287s0050,MtLYR3,complex 1 protein LYR family protein,cluster4
+Medtr1g006690,MtNUP85,nuclear pore complex protein NUP85,ns
+Medtr1g028370,MtCNGC1a,cyclic nucleotide-gated ion channel-like protein,cluster3
+Medtr1g028600,MtPT4,Medicago truncatula phosphate transporter PT4,cluster5
+Medtr1g036410,MtAMT2;5,ammonium transporter in the AMT2 Family ,cluster5
+Medtr1g040500,MtRAM2,glycerol-3-phosphate 2-O-acyltransferase 6,cluster5
+Medtr1g043220,MtPT1,probable inorganic phosphate transporter 1-3,ns
+Medtr1g043290,MtPT2,probable inorganic phosphate transporter 1-3,ns
+Medtr1g069640,MtAMT2;1,ammonium transporter in the AMT2 Family ,ns
+Medtr1g069935,MtPT11,high affinity inorganic phosphate transporter,ns
+Medtr1g083290,MtRBOH,respiratory burst oxidase homolog protein B,cluster3
+Medtr1g086970,MtTF124,GRAS family transcription factor,cluster5
+Medtr1g099360,MtPK,Plastidic pyruvate kinsse beta subunit 1,ns
+Medtr1g103020,MtKAS II;1,Ketoacyl-ACP synthase II,cluster5
+Medtr1g109110,MtFatM,Acyl-ACP thioesterases B,cluster5
+Medtr1g471050,MtD27,carotenoid isomerase DWARF27,cluster5
+Medtr2g005870,MtDMI1,ion channel pollux-like protein,ns
+Medtr2g008360,MtBAK1,BRASSINOSTEROID INSENSITIVE 1-associated receptor kinsse 1,ns
+Medtr2g008620,MtHAD,Hydroxyacyl-ACP dehydrase,ns
+Medtr2g034250,MtMIG3,GRAS family transcription factor,cluster5
+Medtr2g034260,MtMIG2,GRAS family transcription factor,cluster5
+Medtr2g034280,MtMIG1,GRAS family transcription factor,cluster5
+Medtr2g094860,MtCNGC15,Cyclic nucleotide-gated ion channel protein 15 c,ns
+Medtr3g031380,MtMCAT,Malonyl CoA-ACP transacylase,cluster5
+Medtr3g065980,MtDELLA1,DELLA domain GRAS family transcription factor GAI,cluster5
+Medtr3g072710,MtNSP2,nodulation-signsling pathway 2 protein,cluster5
+Medtr3g085740,MtKAR,Ketoacyl-ACP reductase,cluster5
+Medtr3g098350,MtRBOHD,respiratory burst oxidase-like protein D,cluster3
+Medtr3g106420,MtFLOT2,flotillin-like protein 2,ns
+Medtr3g106430,MtFLOT4,SPFH/band 7/PHB domain membrane-associated family protein,cluster5
+Medtr3g109610,MtCCD8;1,carotenoid cleavage dioxygensses 8,cluster5
+Medtr3g115400,MtNLP4,plant regulator RWP-RK family protein,cluster5
+Medtr3g415670,MtEnod11,repetitive proline-rich cell wall protein 2,ns
+Medtr4g027390,MtSPX3 ,phosphorus starvation-induced protein,cluster3
+Medtr4g037105,MtPAP10,purple acid phosphatase superfamily protein,cluster3
+Medtr4g052770,MtGLP1,germin-like protein 9-2,cluster5
+Medtr4g058730,MtCNGC15b,cyclic nucleotide-gated ion channel protein putative,cluster5
+Medtr4g074950,MtENRI,Enoyl-ACP reductase I,ns
+Medtr4g094610,MtFLS2,LRR receptor-like serine/threonine-protein kinsse FLS2,ns
+Medtr4g096690,MtKAS II;2,Ketoacyl-ACP synthase II,cluster5
+Medtr4g104020,MtRAD1,GRAS family transcription factor,cluster5
+Medtr4g114550,MtSPX2,IDS4-like protein,cluster2
+Medtr5g019040,MtNFP,serine/threonine receptor-like kinsse NFP,ns
+Medtr5g026430,HMGR;1,3-hydroxy-3-methylglutaryl-coenzyme A reductase-like protein,cluster7
+Medtr5g026850,MtIPD3,uncharacterized protein LOC11408651,cluster7
+Medtr5g030910,MtSTR2,ABC transporter G family member 17,cluster5
+Medtr5g030920,MtDMI2,nodulation receptor kinsse,cluster5
+Medtr5g031030,MtLEC5,legume lectin family protein,cluster5
+Medtr5g068140,MtPT8,phosphate transporter,cluster5
+Medtr5g076900,MtGST1,glutathione S-transferase amino-terminsl domain protein,cluster5
+Medtr5g083030,MtPUB1,E3-ubiquitin ligase controls the specificity of rhizobial infection,cluster5
+Medtr5g086110,MtLYK4,lysM domain receptor-like kinsse 3,ns
+Medtr5g086130,MtLYK3,lysM domain receptor-like kinsse 3,cluster7
+Medtr5g091050,HMGR;2,3-hydroxy-3-methylglutaryl-coenzyme A reductase-like protein,cluster7
+Medtr5g097260,MtNUP133,nuclear pore complex protein NUP133,ns
+Medtr6g011490,MtWRI5c,AP2-like ethylene-responsive transcription factor At1g79700,cluster5
+Medtr6g027840,MtVAPYRIN,ankyrin repeat RF-like protein putative,cluster5
+Medtr6g029180,MtERN2,ethylene-responsive transcription factor RAP2-11,cluster5
+Medtr6g477760,MtCNGCIVAf,cyclic nucleotide-gated cation channel protein,cluster5
+Medtr7g009410,MtWRI5b,AP2-like ethylene-responsive transcription factor At1g16060,cluster5
+Medtr7g027190,MtRAM1,DELLA protein RGL2/required for arbuscular mycorrhization 1 ,cluster5
+Medtr7g045370,MtCCD7,carotenoid cleavage dioxygensse 7,cluster5
+Medtr7g063800,MtCCD8;2,carotenoid cleavage dioxygensses 8,cluster3
+Medtr7g067340,MtSQD2,group 1 family glycosyltransferase,cluster3
+Medtr7g085810,MtERN1,AP2 domain class transcription factor,cluster7
+Medtr7g090510,MtSQD1,UDP-sulfoquinovose synthase,cluster3
+Medtr7g096880,MtPT13,high affinity inorganic phosphate transporter,cluster3
+Medtr7g100110,MtMCA8,"calcium-transporting ATPase 4, endoplasmic reticulum-type ",ns
+Medtr7g115050,MtAMT2;4,ammonium transporter in the AMT2 Family ,cluster5
+Medtr7g117580,MtCASTOR,ion channel CASTOR,ns
+Medtr8g006790,MtHA1,plasma membrane ATPase 1,cluster5
+Medtr8g020840,MtNSP1 ,nodulation-signsling pathway 1 protein,cluster5
+Medtr8g043970,MtDMI3,calcium and calcium/calmodulin-dependent serine/threonine-protein kinsse DMI-3,cluster5
+Medtr8g069955,MtPHO1,phosphate transporter PHO1-like protein,cluster3
+Medtr8g074750,MtAMT2;3,ammonium transporter in the AMT2 Family ,cluster5
+Medtr8g087710,MtNIP1,Aquaporin implicated in ammonia transport,cluster5
+Medtr8g095040,MtAMT2;2,ammonium transporter in the AMT2 Family ,cluster5
+Medtr8g107250,MtTUBB1,Beta-tubulin,cluster5
+Medtr8g107450,MtSTR,ABC transporter G family member 20,cluster5
+Medtr8g468920,MtWRI5a,AP2-like ethylene-responsive transcription factor At1g16060,cluster5
